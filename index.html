@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applied AI Labs - Real Estate Training Collection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #1a2a4a;
+            --primary-light: #2c5282;
+            --accent-gold: #C5A572;
+            --accent-gold-light: #D4BC8E;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--bg-light) 0%, #f0f4f8 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header Section */
+        header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+            color: var(--bg-white);
+            padding: 4rem 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(197, 165, 114, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        header .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header-accent {
+            color: var(--accent-gold-light);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Grid Layout */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--bg-white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border: 1px solid var(--border-color);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-8px);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+            padding: 1.5rem;
+            color: var(--bg-white);
+            border-bottom: 4px solid var(--accent-gold);
+        }
+
+        .card-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .card-badge {
+            display: inline-block;
+            background: rgba(197, 165, 114, 0.2);
+            color: var(--accent-gold-light);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .card-features {
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-tag {
+            display: inline-block;
+            background: #e6f0ff;
+            color: var(--primary-dark);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .card-footer {
+            padding: 0 1.5rem 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+            color: var(--bg-white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(26, 42, 74, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--accent-gold);
+            color: var(--primary-dark);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-gold-light);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-dark);
+            color: var(--bg-white);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        footer a {
+            color: var(--accent-gold);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            header p {
+                font-size: 1rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+                padding: 2rem 1rem;
+                gap: 1.5rem;
+            }
+
+            .card-footer {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 2rem 1rem;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .card-header h2 {
+                font-size: 1.25rem;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+        }
+
+        /* Utility Classes */
+        .text-muted {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .icon {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <h1>Applied AI Labs</h1>
+            <p>Real Estate <span class="header-accent">AI Training</span> Collection</p>
+            <p style="font-size: 0.95rem; margin-top: 1rem; opacity: 0.85;">Premium implementations curated for maximum effectiveness</p>
+        </div>
+    </header>
+
+    <!-- Cards Grid -->
+    <div class="cards-grid">
+        <!-- Card 1: Claude Opus -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Claude Opus 4.5</h2>
+                <span class="card-badge">Extended Thinking</span>
+            </div>
+            <div class="card-content">
+                <p class="card-description">
+                    Leverages Claude's most advanced reasoning model with extended thinking capabilities. Designed for complex real estate scenarios requiring deep analysis and nuanced decision-making.
+                </p>
+                <div class="card-features">
+                    <span class="feature-tag">🧠 Deep Reasoning</span>
+                    <span class="feature-tag">📊 Analysis</span>
+                    <span class="feature-tag">💡 Advanced</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="AI for Realestate-claude-opus-4-5-20251101-thinking-32k LMA.html" class="btn btn-primary">Open Training</a>
+            </div>
+        </div>
+
+        <!-- Card 2: Claude Sonnet -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Claude Sonnet 4.5</h2>
+                <span class="card-badge">Optimized Version</span>
+            </div>
+            <div class="card-content">
+                <p class="card-description">
+                    Refined through multi-stage LMC-to-LMA optimization pipeline from Minimax baseline. Excellent balance of speed and capability for real estate training scenarios.
+                </p>
+                <div class="card-features">
+                    <span class="feature-tag">⚡ Fast</span>
+                    <span class="feature-tag">✅ Optimized</span>
+                    <span class="feature-tag">v2 Good</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="AI Realestate From minimax LMC to claude-sonnet-4-5-20250929-thinking-32k LMA v2 good.html" class="btn btn-primary">Open Training</a>
+            </div>
+        </div>
+
+        <!-- Card 3: Grok 4.1 -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Grok 4.1</h2>
+                <span class="card-badge">Fast Reasoning</span>
+            </div>
+            <div class="card-content">
+                <p class="card-description">
+                    High-speed reasoning engine with prompting optimized through Qwen3 Vision and cleanup via LMA. Built for rapid real estate analysis and decision support.
+                </p>
+                <div class="card-features">
+                    <span class="feature-tag">🚀 Speed</span>
+                    <span class="feature-tag">🎯 Focused</span>
+                    <span class="feature-tag">Qwen3 Optimized</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="AI Realestate grok 41 fast reasoning LMC prompt from Qwen3 VL 32B Instruct and LMA cleanup.html" class="btn btn-primary">Open Training</a>
+            </div>
+        </div>
+
+        <!-- Card 4: Qwen -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Qwen</h2>
+                <span class="card-badge">Enhanced</span>
+            </div>
+            <div class="card-content">
+                <p class="card-description">
+                    Open-source foundation enhanced through Gemini optimization. Provides cost-effective real estate training with strong reasoning capabilities.
+                </p>
+                <div class="card-features">
+                    <span class="feature-tag">💰 Efficient</span>
+                    <span class="feature-tag">🔓 Open</span>
+                    <span class="feature-tag">Gemini Enhanced</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="Qwen improved by gem.html" class="btn btn-primary">Open Training</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Applied AI Labs. Real Estate AI Training Collection.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.85rem;">Visit individual pages for full training materials and implementations</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Applied AI Labs - Relators AI Advantage</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .step-card { @apply p-6 rounded-lg shadow-lg bg-white border border-gray-200 transition-shadow duration-300 hover:shadow-xl; }
+    .step-card:hover { @apply shadow-xl; }
+    .nav-pill { @apply inline-block px-4 py-2 rounded-full text-sm font-medium cursor-pointer transition-all duration-200; }
+    .nav-pill.active { @apply bg-blue-600 text-white; }
+    .nav-pill:hover:not(.active) { @apply bg-blue-100 text-blue-800; }
+    .progress-bar { @apply h-2 bg-gray-200 rounded-full overflow-hidden; }
+    .progress-fill { @apply h-full bg-blue-600 rounded-full transition-all duration-500; }
+    .tooltip-content { @apply bg-gray-800 text-white px-3 py-1 rounded-md text-sm absolute z-50 whitespace-nowrap; }
+    .tooltip { @apply inline-block relative; }
+
+    .nav-step {
+      @apply flex flex-col items-center p-3 rounded-lg transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:shadow-lg;
+    }
+    .step-circle {
+      @apply w-12 h-12 flex items-center justify-center rounded-2xl bg-gray-100 text-gray-600 font-bold text-sm shadow-sm transition-all duration-300 mx-auto mb-2 border-2 border-gray-200;
+    }
+    .nav-step:hover:not(.active):not(.completed) .step-circle {
+      @apply bg-blue-50 text-blue-600 border-blue-300 shadow-md;
+    }
+    .nav-step.active .step-circle {
+      @apply bg-blue-600 text-white border-blue-400 shadow-xl scale-110;
+    }
+    .nav-step.completed .step-circle {
+      @apply bg-green-600 text-white border-green-400 shadow-xl scale-105;
+    }
+    .step-label {
+      @apply mt-2 text-xs md:text-sm font-medium text-gray-700 text-center leading-tight px-1 max-w-[6rem] md:max-w-none;
+    }
+    .nav-step.active .step-label {
+      @apply text-blue-800 font-bold;
+    }
+    .nav-step.completed .step-label {
+      @apply text-green-800 font-bold;
+    }
+    .nav-step:not(.active):not(.completed) {
+      @apply opacity-70 hover:opacity-100;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
+    <header class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">Applied AI Labs - Relators AI Advantage</h1>
+      <p class="text-lg text-gray-600">A browser-native AI training system for Seattle real estate agents serving high-net-worth clients.</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="mb-12 flex justify-center items-start gap-3 md:gap-6 lg:gap-8 max-w-5xl mx-auto">
+      <button id="nav-module-1" class="nav-step active" onclick="showModule(1)">
+        <div class="step-circle"><span id="step-icon-1">1</span></div>
+        <span class="step-label">AI Demystified</span>
+      </button>
+      <button id="nav-module-2" class="nav-step" onclick="showModule(2)">
+        <div class="step-circle"><span id="step-icon-2">2</span></div>
+        <span class="step-label">Prompting Mastery</span>
+      </button>
+      <button id="nav-module-3" class="nav-step" onclick="showModule(3)">
+        <div class="step-circle"><span id="step-icon-3">3</span></div>
+        <span class="step-label">AI for Luxury RE</span>
+      </button>
+      <button id="nav-module-4" class="nav-step" onclick="showModule(4)">
+        <div class="step-circle"><span id="step-icon-4">4</span></div>
+        <span class="step-label">Build AI Workflow</span>
+      </button>
+      <button id="nav-module-5" class="nav-step" onclick="showModule(5)">
+        <div class="step-circle"><span id="step-icon-5">5</span></div>
+        <span class="step-label">Glossary & Resources</span>
+      </button>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="mb-8">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-sm font-medium">Progress</span>
+        <span id="progress-text" class="text-sm font-medium">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- Modules Container -->
+    <div id="modules-container" class="space-y-8">
+      <!-- Module 1: AI Demystified -->
+      <section id="module-1" class="space-y-6">
+        <div class="step-card">
+          <h2 class="text-2xl font-bold mb-4">What is AI? (And Why You Should Care)</h2>
+          <p class="text-gray-700 mb-4">
+            AI – or Artificial Intelligence – is not a robot in your office. It’s a set of tools, like a super-smart assistant, that can help you write, research, analyze, and even visualize luxury properties for your high-net-worth clients in Seattle.
+          </p>
+          <p class="text-gray-700 mb-4">
+            You’re likely skeptical. That’s okay. Most agents were too. But consider: AI is already being used by top agents in Manhattan, Silicon Valley, and now Seattle to generate custom property brochures for clients with private jets, automate luxury market reports with local data from West Seattle, Medina, or Bellevue, and simulate how a $5M renovation could look — before you even build it.
+          </p>
+          <p class="text-sm text-gray-600 italic">
+            AI helps you work smarter, not harder — with more time to focus on your clients' relationships.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <h2 class="text-2xl font-bold mb-4">Why AI is Relevant for Seattle Luxury Real Estate</h2>
+          <p class="text-gray-700 mb-4">
+            Seattle’s luxury market is competitive. Your clients expect:
+          </p>
+          <ul class="list-disc ml-6 mt-2 text-gray-700">
+            <li>Personalization: Property lists tailored to their lifestyle (yacht docking, art galleries, waterfront)</li>
+            <li>Speed: Quick market analysis during high-stakes negotiations</li>
+            <li>Visuals: Virtual tours and design mockups for off-market deals</li>
+          </ul>
+          <p class="text-gray-700 mt-4">
+            AI accelerates this. In <strong>10 seconds</strong>, an AI can draft a personalized letter describing why a client would love a waterfront home in Bainbridge, while you’re still deciding which coffee to buy.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <h2 class="text-2xl font-bold mb-4">Your AI Mindset Shift</h2>
+          <p class="text-gray-700 mb-4">
+            Don’t think of AI as replacing you — think of it as your <strong>newest sales assistant</strong>.
+          </p>
+          <p class="text-gray-700">
+            Here’s how to start:
+          </p>
+          <ul class="list-disc ml-6 mt-2 text-gray-700">
+            <li>Ask AI to draft a client email — then edit and add your warmth</li>
+            <li>Use it to generate ideas for open houses — then choose the best 2</li>
+            <li>Let it summarize 10 market reports in 1 minute — freeing up your morning</li>
+          </ul>
+          <p class="text-sm font-medium text-blue-600 mt-2">
+            Tip: Start small. Use AI for low-stakes tasks. Your confidence will grow.
+          </p>
+          <div class="bg-gray-100 p-4 rounded mt-6">
+            <p class="text-sm font-medium">Click to mark this module complete and save progress.</p>
+            <button id="complete-module-1" class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Complete Module 1</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Module 2: Prompting Mastery -->
+      <section id="module-2" class="hidden space-y-6">
+        <div class="step-card">
+          <h2 class="text-2xl font-bold mb-4">Good, Better, Best Prompting Framework</h2>
+          <p class="text-gray-700 mb-4">
+            The quality of your AI output depends on your input. Use the <strong>Good/Better/Best</strong> format to refine prompts.
+          </p>
+          <div class="space-y-4">
+            <div>
+              <h3 class="font-medium">Good Prompt</h3>
+              <p class="bg-gray-100 p-3 rounded text-sm italic">"Write an email about a new listing."</p>
+              <p class="text-sm text-gray-600 mt-1">➡️ Result: Generic, vague, no personality or purpose.</p>
+            </div>
+            <div>
+              <h3 class="font-medium">Better Prompt</h3>
+              <p class="bg-gray-100 p-3 rounded text-sm italic">"Write a warm, personalized email to a luxury client in Washington State, highlighting a new $2.5M listing in Bellevue with a view of Lake Washington, focusing on privacy and outdoor living."</p>
+              <p class="text-sm text-gray-600 mt-1">➡️ Result: More specific, but still basic.</p>
+            </div>
+            <div>
+              <h3 class="font-medium">Best Prompt</h3>
+              <p class="bg-gray-100 p-3 rounded text-sm italic">"Write a 150-word personalized email to a client who owns a penthouse in downtown Seattle and enjoys wine, art, and lake views. Introduce a new $2.5M gated home in Bellevue with a custom wine cellar, lakefront patio, and panoramic views. Use an elegant, conversational tone. Include one sentence about how this property complements their current lifestyle. End with a call to action to schedule a private viewing."</p>
+              <p class="text-sm text-gray-600 mt-1">➡️ Result: Highly targeted, lifestyle-focused, emotionally engaging — perfect for high-net-worth clients.</p>
+            </div>
+          </div>
+          <p class="text-sm font-medium text-blue-600 mt-4">
+            Why it works: The best prompt adds <strong>context, audience, purpose, tone, and structure</strong>. This is AI’s GPS.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <h2 class="text-2xl font-bold mb-4">20 Sample Prompts for Seattle Luxury Real Estate</h2>
+          <div class="space-y-3">
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">1.</p><span class="text-sm ml-2 block">"Generate a 3-paragraph market update for luxury homes in Seattle’s Capitol Hill, including average days on market, price trends, and top buyer demographics for Q2 2025."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">2.</p><span class="text-sm ml-2 block">"Write a social media post for Instagram highlighting a new $7M listing in Medina, focusing on the private pool, guest house, and proximity to the water. Use a luxurious, aspirational tone."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">3.</p><span class="text-sm ml-2 block">"Create a pitch deck for a luxury broker on why AI-generated property visualizations add value in Seattle’s competitive market."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">4.</p><span class="text-sm ml-2 block">"Draft a follow-up email to a client who viewed a $4.5M home in West Seattle, reminding them of unique features like the outdoor kitchen and custom lighting, and suggest a next step."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">5.</p><span class="text-sm ml-2 block">"Write a one-liner elevator pitch for a luxury home in Mercer Island that can be used in a client’s brochure or video script: 'Imagine your own private island with a yacht slip and 360-degree views...'"</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">6.</p><span class="text-sm ml-2 block">"Generate a list of 10 luxury amenities that are most desired by high-net-worth buyers in Seattle, ranked by importance."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">7.</p><span class="text-sm ml-2 block">"Simulate a conversation between a luxury buyer and seller’s agent, where the AI helps the agent answer questions about a $6M home’s architectural history, renovations, and neighborhood."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">8.</p><span class="text-sm ml-2 block">"Create a 10-day content calendar for a luxury agent in Seattle, including prompts for emails, posts, videos, and market insights."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">9.</p><span class="text-sm ml-2 block">"Write a personalized note to a client who just made an offer, mentioning their family’s love for outdoor entertaining and how the property’s patio space is ideal for their lifestyle."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">10.</p><span class="text-sm ml-2 block">"Generate a comparison table of luxury homes in North Seattle vs. South Lake Union, including price ranges, average home size, and top schools."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">11.</p><span class="text-sm ml-2 block">"Draft a proposal for a custom AI tool that helps Seattle luxury agents track client preferences, property history, and communication logs."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">12.</p><span class="text-sm ml-2 block">"Create a script for a 60-second video tour of a $3.8M home in Queen Anne, focusing on the rooftop deck and city views. Include voiceover cues."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">13.</p><span class="text-sm ml-2 block">"Write a persuasive argument for why luxury agents should use AI to generate personalized videos for clients — with benefits, examples, and objections handled."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">14.</p><span class="text-sm ml-2 block">"Generate a 100-word luxury home description that includes: architecture style, unique features, neighborhood vibe, and why it fits a tech entrepreneur’s lifestyle."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">15.</p><span class="text-sm ml-2 block">"Draft a thank-you note to a client who provided feedback on a property viewing, thanking them for their time and sharing one improvement idea based on AI analysis of client engagement."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">16.</p><span class="text-sm ml-2 block">"Create a list of 5 luxury real estate trends in Seattle for 2025-2026, based on local data, and suggest how agents can prepare."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">17.</p><span class="text-sm ml-2 block">"Write a compelling subject line for an email to a high-net-worth client introducing a new off-market opportunity in the Leschi neighborhood."</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">18.</p><span class="text-sm ml-2 block">"Generate a short story-based property description: 'Last summer, a family of four discovered a hidden gem in Seward Park — a 1912 craftsman home with a secret garden. Now, it's available for the right buyer...'"</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+              <p class="font-bold text-sm">20.</p><span class="text-sm ml-2 block">"Create a template for an AI-powered client profile, including sections for lifestyle, goals, design preferences, and property criteria — tailored to Seattle luxury buyers."</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <h2 class="text-2xl font-bold mb-4">Prompting Pro Tips</h2>
+          <ul class="list-disc ml-6 space-y-2 text-gray-700">
+            <li><strong>Be specific about audience</strong>: “For a client who owns a penthouse in downtown Seattle” vs. “for a client”</li>
+            <li><strong>Define tone</strong>: “Elegant, conversational, warm” vs. “neutral”</li>
+            <li><strong>Include structure</strong>: “Write 3 paragraphs,” “Include bullet points,” “Use a question for engagement”</li>
+            <li><strong>Specify length</strong>: “150 words,” “One sentence,” “A 60-second script”</li>
+            <li><strong>Ask for options</strong>: “Give me 3 different angles for this email”</li>
+          </ul>
+          <div class="bg-gray-100 p-4 rounded mt-6">
+            <p class="text-sm font-medium">Click to mark this module complete and save progress.</p>
+            <button id="complete-module-2" class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Complete Module 2</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Module 3: AI for Seattle Luxury Real Estate -->
+      <section id="module-3" class="hidden space-y-6">
+        <div class="step-card">
+          <h2 class="text-2xl font-bold mb-4">AI Use Cases for Seattle Luxury Agents</h2>
+          <p class="text-gray-700 mb-4">
+            Here’s how you can use AI to serve high-net-worth clients — beyond just emails and posts.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-blue-50 p-4 rounded">
+              <h3 class="font-bold mb-2">1. Custom Market Reports</h3>
+              <p class="text-sm">Use AI to generate personalized reports for clients, showing price trends, inventory, and comps in their target neighborhoods — all formatted professionally in minutes.</p>
+            </div>
+            <div class="bg-blue-50 p-4 rounded">
+              <h3 class="font-bold mb-2">2. Design & Renovation Simulation</h3>
+              <p class="text-sm">AI can generate design mockups for remodels (e.g., “Simulate what a modern kitchen renovation would look like in this 1920s home with marble countertops and a chef’s island”).</p>
+            </div>
+            <div class="bg-blue-50 p-4 rounded">
+              <h3 class="font-bold mb-2">3. Client Persona Development</h3>
+              <p class="text-sm">Input client data into AI: “Create a 100-word profile for a client who enjoys yoga, fine dining, and art — what kind of home would suit them in Seattle?”</p>
+            </div>
+            <div class="bg-blue-50 p-4 rounded">
+              <h3 class="font-bold mb-2">4. Open House Ideas</h3>
+              <p class="text-sm">AI can generate themes, decorations, music, and guest list suggestions for luxury open houses — tailored to the home and target audience (e.g., “Yacht club members,” “Art collectors”).</p>
+            </div>
+            <div class="bg-blue-50 p-4 rounded">
+              <h3 class="font-bold mb-2">5. Property Storytelling</h3>
+              <p class="text-sm">Turn a listing into a narrative: “Write a short story about the history of this 1913 Tudor in Magnolia — include its past owners, architectural details, and why it’s perfect for a creative family.”</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <h2 class="text-2xl font-bold mb-4">AI for Client Retention & Growth</h2>
+          <p class="text-gray-700 mb-4">
+            Your most valuable clients aren’t just buying — they’re investing in your relationship. Use AI to:
+          </p>
+          <ul class="list-disc ml-6 space-y-2 text-gray-700">
+            <li>Create personalized birthday or holiday cards with AI-generated messages</li>
+            <li>Generate monthly property alerts based on client preferences (e.g., “Off-market homes in Bainbridge with a private dock”)</li>
+            <li>Use AI to track client interactions and suggest follow-up emails based on behavior</li>
+            <li>Write “You Might Like” recommendations for complementary luxury services (e.g., private chefs, concierge, security)</li>
+          </ul>
+        </div>
+
+        <div class="step-card">
+          <h2 class="text-2xl font-bold mb-4">AI vs. Human: The Synergy</h2>
+          <p class="text-gray-700 mb-4">
+            AI can’t replace your expertise, but it can <strong>extend your reach</strong>.
+          </p>
+          <p class="text-gray-700">
+            Think of it as a 24/7 assistant who can:
+          </p>
+          <ul class="list-disc ml-6 mt-2 text-gray-700">
+            <li>Research properties in <strong>10 seconds</strong> instead of 10 minutes</li>
+            <li>Draft a first message that you <strong>personalize with your voice</strong></li>
+            <li>Identify market gaps or emerging neighborhoods <strong>before competitors</strong></li>
+          </ul>
+          <p class="text-sm font-medium text-blue-600 mt-2">
+            AI doesn’t replace your judgment — it gives you more time to use it.
+          </p>
+          <div class="bg-gray-100 p-4 rounded mt-6">
+            <p class="text-sm font-medium">Click to mark this module complete and save progress.</p>
+            <button id="complete-module-3" class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Complete Module 3</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Module 4: Build Your AI Workflow -->
+      <section id="module-4" class="hidden space-y-6">
+        <div class="step-card">
+          <h2 class="text-2xl font-bold mb-4">Your 5-Day AI Integration Plan</h2>
+          <p class="text-gray-700 mb-4">
+            Start small, scale smart. Here’s your proven plan.
+          </p>
+          <div class="space-y-4">
+            <div class="bg-gray-100 p-4 rounded">
+              <h3 class="font-bold">Day 1: AI Awareness</h3>
+              <p class="text-sm">Complete Module 1. Set a goal: “I will use AI to write one email this week.”</p>
+            </div>
+            <div class="bg-gray-100 p-4 rounded">
+              <h3 class="font-bold">Day 2: First Prompt Experiment</h3>
+              <p class="text-sm">Use one of the 20 sample prompts (e.g., #4). Paste into your AI tool. Edit the output. Send to a client or colleague for feedback.</p>
+            </div>
+            <div class="bg-gray-100 p-4 rounded">
+              <h3 class="font-bold">Day 3: Customize a Prompt</h3>
+              <p class="text-sm">Take a good prompt and turn it into a better/best version. Write a personalized email using the best prompt format.</p>
+            </div>
+            <div class="bg-gray-100 p-4 rounded">
+              <h3 class="font-bold">Day 4: Build a Template</h3>
+              <p class="text-sm">Create 3 AI prompt templates for common tasks (e.g., client follow-up, market report, open house ideas) and save them.</p>
+            </div>
+            <div class="bg-gray-100 p-4 rounded">
+              <h3 class="font-bold">Day 5: Share Your Success</h3>
+              <p class="text-sm">Share one AI-powered result with your team or mentor. Celebrate — you’ve won the first battle against skepticism!</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <h2 class="text-2xl font-bold mb-4">AI Workflow Checklist</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-green-50 p-4 rounded">
+              <h3 class="font-bold">✅ Prompt Library</h3>
+              <p class="text-sm">Create a folder/sheet of your top 10 prompts for Seattle luxury real estate.</p>
+            </div>
+            <div class="bg-green-50 p-4 rounded">
+              <h3 class="font-bold">✅ AI Tool Setup</h3>
+              <p class="text-sm">Sign up for a free AI tool (e.g., ChatGPT, Gemini, Claude). Set your “assistant” persona: “Luxury Real Estate Agent, Seattle, USA.”</p>
+            </div>
+            <div class="bg-green-50 p-4 rounded">
+              <h3 class="font-bold">✅ Workflow Integration</h3>
+              <p class="text-sm">Assign tasks to AI (e.g., Daily Market Summary, Client Follow-Up Drafts, Property Story Ideas).</p>
+            </div>
+            <div class="bg-green-50 p-4 rounded">
+              <h3 class="font-bold">✅ Review & Edit Process</h3>
+              <p class="text-sm">Set a rule: “AI drafts first, I edit second.” Always add your personal touch.</p>
+            </div>
+            <div class="bg-green-50 p-4 rounded">
+              <h3 class="font-bold">✅ Client Communication Plan</h3>
+              <p class="text-sm">Define how you will use AI with clients — transparently or discreetly? (e.g., “I’m using AI to research your ideal home — here’s a fast analysis!”)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <h2 class="text-2xl font-bold mb-4">Tracking Your Progress</h2>
+          <p class="text-gray-700 mb-4">
+            Use Local Storage to track your AI wins.
+          </p>
+          <div class="bg-gray-100 p-4 rounded">
+            <p class="text-sm font-medium">Click the “Complete Module” button below to save your progress to your browser.</p>
+            <button id="complete-module-4" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Complete Module 4</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Module 5: Glossary & Resources -->
+      <section id="module-5" class="hidden space-y-6">
+        <div class="step-card">
+          <h2 class="text-2xl font-bold mb-4">AI Glossary (30 Terms)</h2>
+          <div class="space-y-2 text-sm text-gray-700">
+            <p><strong>1. AI</strong> (Artificial Intelligence): Machines that simulate human intelligence for tasks like writing, analysis, and decision-making.</p>
+            <p><strong>2. Large Language Model (LLM)</strong>: A type of AI that generates text, like ChatGPT or Gemini.</p>
+            <p><strong>3. Prompt</strong>: The input you give to AI to generate a response.</p>
+            <p><strong>4. Token</strong>: A unit of text (like a word or part of a word) used by AI for processing.</p>
+            <p><strong>5. Context Window</strong>: The amount of text the AI can “remember” when generating output (e.g., 32,000 tokens).</p>
+            <p><strong>6. Hallucination</strong>: When AI creates false information — always verify facts.</p>
+            <p><strong>7. Fine-Tuning</strong>: Training an AI model to be better at a specific task (e.g., luxury real estate).</p>
+            <p><strong>8. Natural Language Processing (NLP)</strong>: How AI understands and generates human language.</p>
+            <p><strong>9. Generative AI</strong>: AI that creates new content (text, images, audio, video).</p>
+            <p><strong>10. Prompt Engineering</strong>: The skill of writing effective prompts for AI.</p>
+            <p><strong>11. Embedding</strong>: A numerical representation of text used by AI to understand meaning.</p>
+            <p><strong>12. Neural Network</strong>: A computing system inspired by the human brain, used in AI.</p>
+            <p><strong>13. Latency</strong>: The time it takes for AI to respond — lower is better.</p>
+            <p><strong>14. API</strong> (Application Programming Interface): A tool that lets software programs communicate.</p>
+            <p><strong>15. Bias</strong>: When AI reflects unfair or inaccurate patterns from training data.</p>
+            <p><strong>16. Agent</strong>: An AI that can take actions based on goals (e.g., “Find homes under $2M in Seattle”)</p>
+            <p><strong>17. Persona</strong>: A role you assign to AI (e.g., “You are a luxury real estate agent in Seattle.”)</p>
+            <p><strong>18. RAG</strong> (Retrieval-Augmented Generation): AI that pulls real data before generating a response.</p>
+            <p><strong>19. Chain-of-Thought</strong>: Prompting AI to show reasoning steps for complex tasks.</p>
+            <p><strong>20. Zero-Shot</strong>: AI doing a task without prior examples (e.g., “Write a story about a Seattle home”)</p>
+            <p><strong>21. Few-Shot</strong>: Giving AI examples before asking it to perform a task.</p>
+            <p><strong>22. Fine-Tuning Dataset</strong>: Data used to train an AI model on a specific task.</p>
+            <p><strong>23. Prompt Injection</strong>: A security risk where bad actors trick AI into doing harmful things.</p>
+            <p><strong>24. Multi-Modal AI</strong>: AI that processes text, images, audio, and video together.</p>
+            <p><strong>25. Tokenization</strong>: Converting text into tokens for AI to process.</p>
+            <p><strong>26. Context</strong>: Background information given to AI to improve responses.</p>
+            <p><strong>27. Output Length</strong>: The number of tokens or words AI generates.</p>
+            <p><strong>28. Model</strong>: The AI system itself (e.g., GPT-4, Claude 3, Gemini 1.5)</p>
+            <p><strong>29. Temperature</strong>: Controls creativity — high = more creative, low = more predictable.</p>
+            <p><strong>30. Prompt Library</strong>: A collection of saved, effective prompts for reuse.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <h2 class="text-2xl font-bold mb-4">Recommended AI Tools</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-100 p-4 rounded">
+              <h3 class="font-bold">ChatGPT (OpenAI)</h3>
+              <p class="text-sm">Excellent for writing, brainstorming, and analysis. Free tier available.</p>
+              <p class="text-sm"><a href="https://chat.openai.com" class="text-blue-600 underline">chat.openai.com</a></p>
+            </div>
+            <div class="bg-gray-100 p-4 rounded">
+              <h3 class="font-bold">Gemini (Google)</h3>
+              <p class="text-sm">Great at combining text, images, and web search. Good for research.</p>
+              <p class="text-sm"><a href="https://gemini.google.com" class="text-blue-600 underline">gemini.google.com</a></p>
+            </div>
+            <div class="bg-gray-100 p-4 rounded">
+              <h3 class="font-bold">Claude (Anthropic)</h3>
+              <p class="text-sm">Strong at long documents and ethical reasoning. Ideal for client reports.</p>
+              <p class="text-sm"><a href="https://claude.ai" class="text-blue-600 underline">claude.ai</a></p>
+            </div>
+            <div class="bg-gray-100 p-4 rounded">
+              <h3 class="font-bold">Perplexity</h3>
+              <p class="text-sm">AI search engine that cites sources — perfect for market data.</p>
+              <p class="text-sm"><a href="https://www.perplexity.ai" class="text-blue-600 underline">perplexity.ai</a></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <h2 class="text-2xl font-bold mb-4">Final Notes</h2>
+          <p class="text-gray-700 mb-4">
+            You’ve completed the Relators AI Advantage training. Remember:
+          </p>
+          <ul class="list-disc ml-6 text-gray-700 space-y-2">
+            <li>AI is a tool — you’re the expert.</li>
+            <li>Always edit and personalize AI output.</li>
+            <li>Start small. Win small. Scale fast.</li>
+            <li>Share your success — your peers will follow.</li>
+          </ul>
+          <p class="text-sm font-medium text-blue-600 mt-4">
+            You’re not just learning AI — you’re leading in luxury real estate.
+          </p>
+          <div class="bg-gray-100 p-4 rounded mt-6">
+            <p class="text-sm font-medium">Click to mark this module complete and save progress (100%!).</p>
+            <button id="complete-module-5" class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Complete Module 5</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center mt-12 text-sm text-gray-500">
+      <p>© 2025 Applied AI Labs | <a href="https://www.appliedailabs.com" class="text-blue-600 underline">https://www.appliedailabs.com</a></p>
+    </footer>
+  </div>
+
+  <!-- JS for Navigation, Progress Tracking, and Local Storage -->
+  <script>
+    function showModule(moduleNum) {
+      // Hide all modules
+      const modules = document.querySelectorAll('#modules-container > section');
+      modules.forEach(module => module.classList.add('hidden'));
+      // Show selected
+      document.getElementById('module-' + moduleNum).classList.remove('hidden');
+      // Update nav active
+      const navPills = document.querySelectorAll('.nav-pill');
+      navPills.forEach(pill => pill.classList.remove('active'));
+      document.getElementById('nav-module-' + moduleNum).classList.add('active');
+      // Update progress to current module level if higher
+      let currentProgress = parseInt(localStorage.getItem('aiTrainingProgress') || '0');
+      const newProgress = Math.max(currentProgress, moduleNum * 20);
+      if (newProgress > currentProgress) {
+        updateProgress(newProgress);
+      }
+    }
+
+    function updateProgress(percentage) {
+      const progressFill = document.getElementById('progress-fill');
+      const progressText = document.getElementById('progress-text');
+      localStorage.setItem('aiTrainingProgress', percentage);
+      progressFill.style.width = percentage + '%';
+      progressText.textContent = percentage + '%';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load initial progress
+      const savedProgress = localStorage.getItem('aiTrainingProgress') || '0';
+      updateProgress(savedProgress);
+
+      // Show module 1 initially
+      showModule(1);
+
+      // Handle all complete-module buttons
+      const completeButtons = document.querySelectorAll('[id^="complete-module-"]');
+      completeButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const match = this.id.match(/complete-module-(\d+)/);
+          if (match) {
+            const moduleNum = parseInt(match[1]);
+            const newProgress = Math.max(parseInt(localStorage.getItem('aiTrainingProgress') || '0'), moduleNum * 20);
+            updateProgress(newProgress);
+            this.innerHTML = 'Module Completed! ✓';
+            this.classList.remove('bg-blue-600', 'bg-green-600', 'hover:bg-blue-700', 'hover:bg-green-700');
+            this.classList.add('bg-green-500');
+            this.style.cursor = 'default';
+            this.disabled = true;
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

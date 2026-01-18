@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applied AI Labs - Realtors AI Advantage</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --gold: #C5A572;
+            --gold-light: #D4BC8E;
+            --navy: #1a2a4a;
+            --navy-dark: #0f1a2e;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .bg-gold {
+            background-color: var(--gold);
+        }
+        
+        .text-gold {
+            color: var(--gold);
+        }
+        
+        .border-gold {
+            border-color: var(--gold);
+        }
+        
+        .bg-navy {
+            background-color: var(--navy);
+        }
+        
+        .bg-navy-dark {
+            background-color: var(--navy-dark);
+        }
+        
+        .gradient-luxury {
+            background: linear-gradient(135deg, #1a2a4a 0%, #2d4a7c 50%, #1a2a4a 100%);
+        }
+        
+        .prompt-box {
+            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 4px solid var(--gold);
+        }
+        
+        .good-prompt { border-left-color: #6c757d; }
+        .better-prompt { border-left-color: #0d6efd; }
+        .best-prompt { border-left-color: #198754; }
+        
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a2a4a;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 100;
+        }
+        
+        .sidebar-link.active {
+            background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
+            border-left: 3px solid var(--gold);
+        }
+        
+        .glossary-term {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .glossary-term:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .check-complete {
+            transition: all 0.3s ease;
+        }
+        
+        .check-complete.completed {
+            background-color: #198754;
+            color: white;
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 50;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Mobile Menu Toggle -->
+    <button id="mobileMenuBtn" class="lg:hidden fixed top-4 left-4 z-50 bg-navy text-white p-3 rounded-lg shadow-lg">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="sidebar fixed left-0 top-0 h-full w-72 bg-navy-dark text-white overflow-y-auto transition-transform duration-300">
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-gold rounded-lg flex items-center justify-center">
+                    <i class="fas fa-brain text-navy text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-display text-lg font-bold text-gold">Applied AI Labs</h1>
+                    <p class="text-xs text-gray-400">Realtors AI Advantage</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Progress Overview -->
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-sm text-gray-400">Your Progress</span>
+                <span id="progressPercent" class="text-gold font-semibold">0%</span>
+            </div>
+            <div class="w-full bg-gray-700 rounded-full h-2">
+                <div id="progressBar" class="bg-gold h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <p id="modulesComplete" class="text-xs text-gray-500 mt-2">0 of 6 modules completed</p>
+        </div>
+        
+        <!-- Navigation Links -->
+        <nav class="p-4">
+            <ul class="space-y-1">
+                <li>
+                    <a href="#" data-module="welcome" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors">
+                        <i class="fas fa-home w-5"></i>
+                        <span>Welcome</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-module="module1" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors">
+                        <i class="fas fa-lightbulb w-5"></i>
+                        <span>1. Why AI Matters Now</span>
+                        <i class="fas fa-check-circle text-green-500 ml-auto hidden" id="check-module1"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-module="module2" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors">
+                        <i class="fas fa-cogs w-5"></i>
+                        <span>2. AI Fundamentals</span>
+                        <i class="fas fa-check-circle text-green-500 ml-auto hidden" id="check-module2"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-module="module3" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors">
+                        <i class="fas fa-pen-fancy w-5"></i>
+                        <span>3. Prompt Mastery</span>
+                        <i class="fas fa-check-circle text-green-500 ml-auto hidden" id="check-module3"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-module="module4" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors">
+                        <i class="fas fa-gem w-5"></i>
+                        <span>4. Luxury AI Strategies</span>
+                        <i class="fas fa-check-circle text-green-500 ml-auto hidden" id="check-module4"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-module="module5" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors">
+                        <i class="fas fa-chart-line w-5"></i>
+                        <span>5. Market Intelligence</span>
+                        <i class="fas fa-check-circle text-green-500 ml-auto hidden" id="check-module5"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-module="module6" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors">
+                        <i class="fas fa-rocket w-5"></i>
+                        <span>6. Advanced Applications</span>
+                        <i class="fas fa-check-circle text-green-500 ml-auto hidden" id="check-module6"></i>
+                    </a>
+                </li>
+                <li class="pt-4 border-t border-gray-700 mt-4">
+                    <a href="#" data-module="glossary" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors">
+                        <i class="fas fa-book w-5"></i>
+                        <span>AI Glossary</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-module="prompts" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors">
+                        <i class="fas fa-clipboard-list w-5"></i>
+                        <span>Prompt Library</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Reset Progress -->
+        <div class="p-4 mt-auto">
+            <button id="resetProgress" class="w-full text-sm text-gray-500 hover:text-red-400 transition-colors py-2">
+                <i class="fas fa-redo mr-2"></i>Reset Progress
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="lg:ml-72 min-h-screen">
+        <!-- Welcome Module -->
+        <section id="welcome" class="module fade-in">
+            <!-- Hero Section -->
+            <div class="gradient-luxury text-white py-16 px-8">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex items-center gap-2 text-gold mb-4">
+                        <i class="fas fa-award"></i>
+                        <span class="text-sm uppercase tracking-wider">Exclusive Training for Elite Agents</span>
+                    </div>
+                    <h1 class="font-display text-4xl md:text-5xl font-bold mb-6">
+                        The Realtors AI Advantage
+                    </h1>
+                    <p class="text-xl text-gray-300 mb-8 leading-relaxed">
+                        Master AI tools designed specifically for Seattle's luxury real estate market. 
+                        Serve your high-net-worth clients with unprecedented insight, efficiency, and sophistication.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="navigateToModule('module1')" class="bg-gold hover:bg-gold-light text-navy font-semibold px-8 py-4 rounded-lg transition-all flex items-center gap-2">
+                            Begin Your Journey <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button onclick="navigateToModule('glossary')" class="border border-white/30 hover:border-gold text-white px-8 py-4 rounded-lg transition-all">
+                            View Glossary
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Why This Training -->
+            <div class="max-w-6xl mx-auto px-8 py-16">
+                <div class="text-center mb-12">
+                    <h2 class="font-display text-3xl font-bold text-navy mb-4">
+                        Why AI Training for Luxury Real Estate?
+                    </h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        Your high-net-worth clients expect exceptional service. AI isn't about replacing your expertise—it's about amplifying it.
+                    </p>
+                </div>
+                
+                <!-- Addressing Skepticism -->
+                <div class="bg-white rounded-2xl shadow-lg p-8 mb-12 border-l-4 border-gold">
+                    <div class="flex items-start gap-4">
+                        <div class="bg-amber-100 text-amber-600 p-3 rounded-full">
+                            <i class="fas fa-exclamation-circle text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-display text-xl font-bold text-navy mb-3">Let's Address the Elephant in the Room</h3>
+                            <p class="text-gray-600 mb-4">
+                                <strong>You might be skeptical about AI.</strong> That's actually smart—it shows you think critically. Many agents worry that AI is just hype, that it'll replace them, or that it's too complicated to learn.
+                            </p>
+                            <p class="text-gray-600 mb-4">
+                                Here's the reality: <strong>AI won't replace great agents. But agents who use AI effectively will outperform those who don't.</strong> In Seattle's competitive luxury market—where a single transaction might be $5M+—even small advantages compound dramatically.
+                            </p>
+                            <p class="text-gray-600">
+                                This training isn't about turning you into a tech expert. It's about giving you <strong>practical, immediately usable strategies</strong> that respect your time and enhance your existing expertise.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Module Overview Cards -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="module-card bg-white rounded-xl shadow-md p-6 transition-all duration-300 cursor-pointer" onclick="navigateToModule('module1')">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fas fa-lightbulb text-xl"></i>
+                        </div>
+                        <h3 class="font-display text-lg font-bold text-navy mb-2">Module 1: Why AI Matters Now</h3>
+                        <p class="text-gray-600 text-sm">Understand why AI is transforming luxury real estate and how Seattle's market is uniquely positioned.</p>
+                        <div class="mt-4 text-gold text-sm font-medium">15 min read →</div>
+                    </div>
+                    
+                    <div class="module-card bg-white rounded-xl shadow-md p-6 transition-all duration-300 cursor-pointer" onclick="navigateToModule('module2')">
+                        <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fas fa-cogs text-xl"></i>
+                        </div>
+                        <h3 class="font-display text-lg font-bold text-navy mb-2">Module 2: AI Fundamentals</h3>
+                        <p class="text-gray-600 text-sm">Learn core concepts without the technical jargon. Understand what AI can and cannot do.</p>
+                        <div class="mt-4 text-gold text-sm font-medium">20 min read →</div>
+                    </div>
+                    
+                    <div class="module-card bg-white rounded-xl shadow-md p-6 transition-all duration-300 cursor-pointer" onclick="navigateToModule('module3')">
+                        <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fas fa-pen-fancy text-xl"></i>
+                        </div>
+                        <h3 class="font-display text-lg font-bold text-navy mb-2">Module 3: Prompt Mastery</h3>
+                        <p class="text-gray-600 text-sm">The art of asking AI the right questions. Good/Better/Best examples for every scenario.</p>
+                        <div class="mt-4 text-gold text-sm font-medium">25 min read →</div>
+                    </div>
+                    
+                    <div class="module-card bg-white rounded-xl shadow-md p-6 transition-all duration-300 cursor-pointer" onclick="navigateToModule('module4')">
+                        <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fas fa-gem text-xl"></i>
+                        </div>
+                        <h3 class="font-display text-lg font-bold text-navy mb-2">Module 4: Luxury AI Strategies</h3>
+                        <p class="text-gray-600 text-sm">Specific techniques for high-net-worth client service, from property analysis to personalization.</p>
+                        <div class="mt-4 text-gold text-sm font-medium">25 min read →</div>
+                    </div>
+                    
+                    <div class="module-card bg-white rounded-xl shadow-md p-6 transition-all duration-300 cursor-pointer" onclick="navigateToModule('module5')">
+                        <div class="w-12 h-12 bg-red-100 text-red-600 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fas fa-chart-line text-xl"></i>
+                        </div>
+                        <h3 class="font-display text-lg font-bold text-navy mb-2">Module 5: Market Intelligence</h3>
+                        <p class="text-gray-600 text-sm">Use AI to analyze Seattle market trends, neighborhood data, and investment opportunities.</p>
+                        <div class="mt-4 text-gold text-sm font-medium">20 min read →</div>
+                    </div>
+                    
+                    <div class="module-card bg-white rounded-xl shadow-md p-6 transition-all duration-300 cursor-pointer" onclick="navigateToModule('module6')">
+                        <div class="w-12 h-12 bg-teal-100 text-teal-600 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fas fa-rocket text-xl"></i>
+                        </div>
+                        <h3 class="font-display text-lg font-bold text-navy mb-2">Module 6: Advanced Applications</h3>
+                        <p class="text-gray-600 text-sm">Next-level strategies including negotiation prep, due diligence, and client retention.</p>
+                        <div class="mt-4 text-gold text-sm font-medium">20 min read →</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 1: Why AI Matters -->
+        <section id="module1" class="module hidden fade-in">
+            <div class="bg-navy text-white py-12 px-8">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex items-center gap-2 text-gold mb-4">
+                        <span class="text-sm uppercase tracking-wider">Module 1</span>
+                    </div>
+                    <h1 class="font-display text-3xl md:text-4xl font-bold mb-4">Why AI Matters Now</h1>
+                    <p class="text-gray-300">Understanding the transformation happening in luxury real estate</p>
+                </div>
+            </div>
+            
+            <div class="max-w-4xl mx-auto px-8 py-12">
+                <!-- Section 1 -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">The Luxury Market is Changing</h2>
+                    <p class="text-gray-700 mb-4 leading-relaxed">
+                        Seattle's luxury real estate market—from Medina waterfront estates to Madison Park mansions—has always demanded exceptional service. Your clients are CEOs, tech founders, and investors who are accustomed to leveraging every advantage available.
+                    </p>
+                    <p class="text-gray-700 mb-4 leading-relaxed">
+                        <strong>Here's what's happening:</strong> These same clients are already using AI in their businesses. When they see you using AI effectively, it signals that you're operating at their level. When you're not, it creates a disconnect.
+                    </p>
+                    
+                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 my-8">
+                        <h4 class="font-semibold text-navy mb-4"><i class="fas fa-chart-bar text-gold mr-2"></i>By the Numbers</h4>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="text-center p-4">
+                                <div class="text-3xl font-bold text-gold">73%</div>
+                                <div class="text-sm text-gray-600">of HNWI expect personalized service</div>
+                            </div>
+                            <div class="text-center p-4">
+                                <div class="text-3xl font-bold text-gold">4.2x</div>
+                                <div class="text-sm text-gray-600">faster response expected vs. 5 years ago</div>
+                            </div>
+                            <div class="text-center p-4">
+                                <div class="text-3xl font-bold text-gold">$2.8M</div>
+                                <div class="text-sm text-gray-600">Seattle median luxury home price</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section 2 -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">What AI Won't Do (And What It Will)</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-red-50 border border-red-200 rounded-xl p-6">
+                            <h4 class="font-semibold text-red-800 mb-4"><i class="fas fa-times-circle mr-2"></i>AI Will NOT:</h4>
+                            <ul class="space-y-2 text-gray-700">
+                                <li>• Replace your relationship skills</li>
+                                <li>• Negotiate on your behalf</li>
+                                <li>• Understand your client's emotions</li>
+                                <li>• Replace your market intuition</li>
+                                <li>• Build trust with clients</li>
+                                <li>• Handle sensitive conversations</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 border border-green-200 rounded-xl p-6">
+                            <h4 class="font-semibold text-green-800 mb-4"><i class="fas fa-check-circle mr-2"></i>AI WILL:</h4>
+                            <ul class="space-y-2 text-gray-700">
+                                <li>• Save 10+ hours per week on tasks</li>
+                                <li>• Generate insights you'd miss</li>
+                                <li>• Create first drafts instantly</li>
+                                <li>• Analyze data at scale</li>
+                                <li>• Help you prepare for any scenario</li>
+                                <li>• Enhance your existing expertise</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section 3 -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">Real Examples from Seattle Agents</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                            <div class="flex items-start gap-4">
+                                <div class="bg-blue-100 text-blue-600 p-3 rounded-full">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div>
+                                    <p class="text-gray-700 italic mb-3">"I used AI to research a tech executive's previous company acquisitions before our first meeting. I knew his investment philosophy before he told me. He was impressed and signed exclusively that day."</p>
+                                    <p class="text-sm text-gray-500">— Bellevue luxury agent, $12M listing</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                            <div class="flex items-start gap-4">
+                                <div class="bg-purple-100 text-purple-600 p-3 rounded-full">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div>
+                                    <p class="text-gray-700 italic mb-3">"AI helped me create a comprehensive neighborhood comparison for a client relocating from San Francisco. What would have taken me a full day took 45 minutes. I included schools, commute analysis, lifestyle factors, and investment projections."</p>
+                                    <p class="text-sm text-gray-500">— Mercer Island specialist, $4.5M purchase</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Key Takeaways -->
+                <div class="bg-navy text-white rounded-xl p-8 mb-8">
+                    <h3 class="font-display text-xl font-bold mb-4"><i class="fas fa-key text-gold mr-2"></i>Key Takeaways</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check text-gold mt-1"></i>
+                            <span>AI is a tool to enhance your expertise, not replace your relationships</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check text-gold mt-1"></i>
+                            <span>Your HNWI clients already expect AI-level efficiency</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check text-gold mt-1"></i>
+                            <span>Early adoption creates competitive advantage in Seattle's market</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Module Completion -->
+                <div class="flex items-center justify-between bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center gap-4">
+                        <button onclick="markComplete('module1')" id="complete-module1" class="check-complete bg-gray-200 hover:bg-green-500 hover:text-white px-6 py-3 rounded-lg font-medium transition-all">
+                            <i class="fas fa-check mr-2"></i>Mark Complete
+                        </button>
+                        <span class="text-sm text-gray-500">Track your progress</span>
+                    </div>
+                    <button onclick="navigateToModule('module2')" class="text-gold hover:text-navy font-medium">
+                        Next: AI Fundamentals <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 2: AI Fundamentals -->
+        <section id="module2" class="module hidden fade-in">
+            <div class="bg-navy text-white py-12 px-8">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex items-center gap-2 text-gold mb-4">
+                        <span class="text-sm uppercase tracking-wider">Module 2</span>
+                    </div>
+                    <h1 class="font-display text-3xl md:text-4xl font-bold mb-4">AI Fundamentals</h1>
+                    <p class="text-gray-300">Core concepts explained without the technical jargon</p>
+                </div>
+            </div>
+            
+            <div class="max-w-4xl mx-auto px-8 py-12">
+                <!-- What is AI -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">What is AI, Really?</h2>
+                    <p class="text-gray-700 mb-4 leading-relaxed">
+                        Think of AI as an incredibly well-read assistant who has studied millions of documents but needs your guidance to apply that knowledge. It's not magic, and it's not thinking like a human. It's pattern recognition at massive scale.
+                    </p>
+                    
+                    <div class="bg-amber-50 border-l-4 border-amber-400 p-6 my-6">
+                        <h4 class="font-semibold text-amber-800 mb-2"><i class="fas fa-lightbulb mr-2"></i>Simple Analogy</h4>
+                        <p class="text-gray-700">Imagine you had an assistant who read every real estate book, market report, and luxury property listing ever written—but they've never actually sold a home or met a client. They can give you great information and suggestions, but <strong>you</strong> provide the judgment, experience, and human connection.</p>
+                    </div>
+                </div>
+                
+                <!-- Types of AI -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">AI Tools You'll Actually Use</h2>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="bg-blue-100 text-blue-600 p-2 rounded-lg">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <h4 class="font-semibold text-navy">Conversational AI (ChatGPT, Claude, Gemini)</h4>
+                            </div>
+                            <p class="text-gray-600 mb-3">Text-based assistants you can ask questions, request drafts, or brainstorm with.</p>
+                            <p class="text-sm text-green-600"><strong>Best for:</strong> Writing, research, analysis, brainstorming, client prep</p>
+                        </div>
+                        
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="bg-purple-100 text-purple-600 p-2 rounded-lg">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <h4 class="font-semibold text-navy">Image AI (Midjourney, DALL-E, Canva AI)</h4>
+                            </div>
+                            <p class="text-gray-600 mb-3">Generate or enhance images, create marketing materials, virtual staging.</p>
+                            <p class="text-sm text-green-600"><strong>Best for:</strong> Property visualization, marketing materials, staging previews</p>
+                        </div>
+                        
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="bg-green-100 text-green-600 p-2 rounded-lg">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <h4 class="font-semibold text-navy">Data Analysis AI (Built into many tools)</h4>
+                            </div>
+                            <p class="text-gray-600 mb-3">Analyze spreadsheets, market data, and identify trends automatically.</p>
+                            <p class="text-sm text-green-600"><strong>Best for:</strong> Market analysis, CMA support, investment projections</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Understanding Limitations -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">Critical Limitations to Understand</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-red-50 border border-red-200 rounded-xl p-6">
+                            <h4 class="font-semibold text-red-800 mb-3"><i class="fas fa-exclamation-triangle mr-2"></i>Hallucinations</h4>
+                            <p class="text-gray-700 text-sm">AI can confidently state things that are completely false. Always verify facts, especially property details, market statistics, and legal information.</p>
+                        </div>
+                        
+                        <div class="bg-orange-50 border border-orange-200 rounded-xl p-6">
+                            <h4 class="font-semibold text-orange-800 mb-3"><i class="fas fa-calendar-times mr-2"></i>Knowledge Cutoff</h4>
+                            <p class="text-gray-700 text-sm">Most AI models have training cutoffs and don't know recent events. They can't tell you about last month's market conditions without you providing that data.</p>
+                        </div>
+                        
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
+                            <h4 class="font-semibold text-yellow-800 mb-3"><i class="fas fa-user-slash mr-2"></i>No Real Understanding</h4>
+                            <p class="text-gray-700 text-sm">AI doesn't truly understand context the way humans do. It can miss nuance, cultural sensitivity, and emotional subtext that you'd catch naturally.</p>
+                        </div>
+                        
+                        <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                            <h4 class="font-semibold text-blue-800 mb-3"><i class="fas fa-lock mr-2"></i>Privacy Concerns</h4>
+                            <p class="text-gray-700 text-sm">Be careful about entering confidential client information. Use privacy settings and understand how each platform handles your data.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Key Takeaways -->
+                <div class="bg-navy text-white rounded-xl p-8 mb-8">
+                    <h3 class="font-display text-xl font-bold mb-4"><i class="fas fa-key text-gold mr-2"></i>Key Takeaways</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check text-gold mt-1"></i>
+                            <span>AI is pattern recognition, not human-like thinking—treat it as a powerful tool, not a colleague</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check text-gold mt-1"></i>
+                            <span>Always verify AI outputs, especially for facts, figures, and legal matters</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check text-gold mt-1"></i>
+                            <span>Different AI tools serve different purposes—start with conversational AI for the biggest impact</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Module Completion -->
+                <div class="flex items-center justify-between bg-gray-50 rounded-xl p-6">
+                    <button onclick="markComplete('module2')" id="complete-module2" class="check-complete bg-gray-200 hover:bg-green-500 hover:text-white px-6 py-3 rounded-lg font-medium transition-all">
+                        <i class="fas fa-check mr-2"></i>Mark Complete
+                    </button>
+                    <button onclick="navigateToModule('module3')" class="text-gold hover:text-navy font-medium">
+                        Next: Prompt Mastery <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 3: Prompt Mastery -->
+        <section id="module3" class="module hidden fade-in">
+            <div class="bg-navy text-white py-12 px-8">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex items-center gap-2 text-gold mb-4">
+                        <span class="text-sm uppercase tracking-wider">Module 3</span>
+                    </div>
+                    <h1 class="font-display text-3xl md:text-4xl font-bold mb-4">Prompt Mastery</h1>
+                    <p class="text-gray-300">The art of asking AI the right questions with Good/Better/Best examples</p>
+                </div>
+            </div>
+            
+            <div class="max-w-4xl mx-auto px-8 py-12">
+                <!-- The CRAFT Framework -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">The CRAFT Framework for Prompting</h2>
+                    <p class="text-gray-700 mb-6">Remember this framework for every prompt you write:</p>
+                    
+                    <div class="grid md:grid-cols-5 gap-4 mb-8">
+                        <div class="bg-white border-2 border-gold rounded-xl p-4 text-center">
+                            <div class="text-2xl font-bold text-gold mb-2">C</div>
+                            <div class="font-semibold text-navy">Context</div>
+                            <div class="text-xs text-gray-500">Background info</div>
+                        </div>
+                        <div class="bg-white border-2 border-gold rounded-xl p-4 text-center">
+                            <div class="text-2xl font-bold text-gold mb-2">R</div>
+                            <div class="font-semibold text-navy">Role</div>
+                            <div class="text-xs text-gray-500">Who AI should be</div>
+                        </div>
+                        <div class="bg-white border-2 border-gold rounded-xl p-4 text-center">
+                            <div class="text-2xl font-bold text-gold mb-2">A</div>
+                            <div class="font-semibold text-navy">Action</div>
+                            <div class="text-xs text-gray-500">What to do</div>
+                        </div>
+                        <div class="bg-white border-2 border-gold rounded-xl p-4 text-center">
+                            <div class="text-2xl font-bold text-gold mb-2">F</div>
+                            <div class="font-semibold text-navy">Format</div>
+                            <div class="text-xs text-gray-500">How to deliver</div>
+                        </div>
+                        <div class="bg-white border-2 border-gold rounded-xl p-4 text-center">
+                            <div class="text-2xl font-bold text-gold mb-2">T</div>
+                            <div class="font-semibold text-navy">Tone</div>
+                            <div class="text-xs text-gray-500">Voice & style</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Example 1: Property Description -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">
+                        <i class="fas fa-home text-gold mr-2"></i>Example 1: Writing a Property Description
+                    </h2>
+                    
+                    <div class="space-y-6">
+                        <!-- Good -->
+                        <div class="prompt-box good-prompt rounded-xl p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="bg-gray-500 text-white text-xs px-3 py-1 rounded-full">GOOD</span>
+                                <span class="text-sm text-gray-500">Basic prompt that works</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 font-mono text-sm mb-4">
+                                "Write a description for a luxury home in Seattle."
+                            </div>
+                            <p class="text-gray-600 text-sm"><strong>Why it's limited:</strong> Too vague. AI doesn't know the property details, target buyer, or your brand voice. You'll get generic content that sounds like everyone else.</p>
+                        </div>
+                        
+                        <!-- Better -->
+                        <div class="prompt-box better-prompt rounded-xl p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="bg-blue-500 text-white text-xs px-3 py-1 rounded-full">BETTER</span>
+                                <span class="text-sm text-gray-500">Added context and specifics</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 font-mono text-sm mb-4">
+                                "Write a luxury property description for a 5,200 sq ft waterfront home in Medina, WA. It has 5 bedrooms, 4.5 baths, a private dock, and panoramic Lake Washington views. Target audience is tech executives."
+                            </div>
+                            <p class="text-gray-600 text-sm"><strong>Why it's improved:</strong> Includes property specifics and target audience. AI can now create relevant content, but still lacks your unique positioning and brand voice.</p>
+                        </div>
+                        
+                        <!-- Best -->
+                        <div class="prompt-box best-prompt rounded-xl p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full">BEST</span>
+                                <span class="text-sm text-gray-500">Complete CRAFT framework</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 font-mono text-sm mb-4">
+                                "You are a luxury real estate copywriter specializing in Seattle's most exclusive properties.<br><br>
+                                Write a compelling property description for:<br>
+                                - 5,200 sq ft waterfront estate in Medina, WA<br>
+                                - 5 bed, 4.5 bath, built 2019, smart home features<br>
+                                - Private dock, 85ft of waterfront, Mt. Rainier views<br>
+                                - Chef's kitchen, wine cellar, home theater<br>
+                                - Listed at $8.9M<br><br>
+                                Target buyer: Tech executives (40-55) who value privacy, modern design, and water activities. They're upgrading from Bellevue.<br><br>
+                                Format: 200 words for MLS, then a 50-word social teaser<br>
+                                Tone: Sophisticated but warm, emphasize exclusivity without being pretentious. Avoid clichés like 'stunning' or 'must-see.'"
+                            </div>
+                            <p class="text-gray-600 text-sm"><strong>Why it's superior:</strong> Complete context, clear role, specific action, defined format, and precise tone. This produces content that sounds like YOUR brand and speaks directly to your ideal buyer.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Example 2: Client Research -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">
+                        <i class="fas fa-search text-gold mr-2"></i>Example 2: Client Pre-Meeting Research
+                    </h2>
+                    
+                    <div class="space-y-6">
+                        <div class="prompt-box good-prompt rounded-xl p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="bg-gray-500 text-white text-xs px-3 py-1 rounded-full">GOOD</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 font-mono text-sm mb-4">
+                                "Tell me about what tech executives look for in homes."
+                            </div>
+                            <p class="text-gray-600 text-sm"><strong>Why it's limited:</strong> Generic answer that won't help you connect with a specific person.</p>
+                        </div>
+                        
+                        <div class="prompt-box better-prompt rounded-xl p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="bg-blue-500 text-white text-xs px-3 py-1 rounded-full">BETTER</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 font-mono text-sm mb-4">
+                                "I'm meeting with a VP of Engineering from Amazon who is looking to buy in the $3-5M range in the Eastside. What should I know about their likely priorities and concerns?"
+                            </div>
+                            <p class="text-gray-600 text-sm"><strong>Why it's improved:</strong> Role and budget context helps, but still generic to a "type" of buyer.</p>
+                        </div>
+                        
+                        <div class="prompt-box best-prompt rounded-xl p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full">BEST</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 font-mono text-sm mb-4">
+                                "I'm a luxury real estate agent in Seattle preparing for a first meeting with a prospective buyer. Here's what I know:<br><br>
+                                - VP of Engineering at Amazon, 8 years tenure<br>
+                                - Relocating from Bay Area with family (2 kids, ages 8 and 12)<br>
+                                - Budget: $3.5-5M<br>
+                                - Interested in Bellevue, Kirkland, or Mercer Island<br>
+                                - Currently renting while they explore<br><br>
+                                Help me prepare by:<br>
+                                1. Suggesting 5 thoughtful questions to understand their priorities<br>
+                                2. Identifying 3 potential pain points in their relocation<br>
+                                3. Recommending specific neighborhoods that match family-with-kids lifestyle<br>
+                                4. Noting any cultural considerations for Bay Area transplants<br><br>
+                                Keep responses practical and focused on building rapport."
+                            </div>
+                            <p class="text-gray-600 text-sm"><strong>Why it's superior:</strong> Specific situation, clear deliverables, actionable format. You'll get insights you can actually use in the meeting.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Example 3: Market Analysis -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">
+                        <i class="fas fa-chart-bar text-gold mr-2"></i>Example 3: Neighborhood Market Analysis
+                    </h2>
+                    
+                    <div class="space-y-6">
+                        <div class="prompt-box good-prompt rounded-xl p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="bg-gray-500 text-white text-xs px-3 py-1 rounded-full">GOOD</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 font-mono text-sm mb-4">
+                                "What's the real estate market like in Madison Park, Seattle?"
+                            </div>
+                        </div>
+                        
+                        <div class="prompt-box better-prompt rounded-xl p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="bg-blue-500 text-white text-xs px-3 py-1 rounded-full">BETTER</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 font-mono text-sm mb-4">
+                                "Analyze Madison Park, Seattle as a luxury real estate neighborhood. Include property values, buyer demographics, and market trends."
+                            </div>
+                        </div>
+                        
+                        <div class="prompt-box best-prompt rounded-xl p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full">BEST</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 font-mono text-sm mb-4">
+                                "Act as a real estate market analyst specializing in Seattle luxury neighborhoods.<br><br>
+                                Create a comprehensive Madison Park neighborhood profile I can use with clients. Include:<br><br>
+                                1. NEIGHBORHOOD CHARACTER<br>
+                                - Architectural styles and lot sizes<br>
+                                - Community vibe and lifestyle<br>
+                                - Notable residents/reputation<br><br>
+                                2. BUYER PROFILE<br>
+                                - Typical buyer demographics<br>
+                                - What draws people here vs. comparable neighborhoods<br>
+                                - Common buyer priorities<br><br>
+                                3. PRACTICAL CONSIDERATIONS<br>
+                                - Commute to downtown/tech hubs<br>
+                                - School options and ratings<br>
+                                - Dining, recreation, amenities within walking distance<br><br>
+                                4. INVESTMENT PERSPECTIVE<br>
+                                - Historical appreciation patterns<br>
+                                - Factors affecting future value<br>
+                                - Comparison to Laurelhurst and Capitol Hill<br><br>
+                                Format as a professional report I could share with clients. Note that I'll verify all statistics independently."
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pro Tips -->
+                <div class="bg-gradient-to-r from-navy to-blue-800 text-white rounded-xl p-8 mb-8">
+                    <h3 class="font-display text-xl font-bold mb-6"><i class="fas fa-star text-gold mr-2"></i>Pro Prompting Tips</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-gold mb-2">Iterate & Refine</h4>
+                            <p class="text-gray-300 text-sm">Don't accept the first response. Say "Make it more concise" or "Add more emotional appeal" or "Rewrite for a more skeptical buyer."</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gold mb-2">Ask for Alternatives</h4>
+                            <p class="text-gray-300 text-sm">"Give me 3 different versions" or "What's another approach?" gets you options to choose from.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gold mb-2">Be the Editor, Not the Writer</h4>
+                            <p class="text-gray-300 text-sm">Let AI create drafts, but always add your personal touch and local expertise before using.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gold mb-2">Save Your Best Prompts</h4>
+                            <p class="text-gray-300 text-sm">Create a personal library of prompts that work well. Reuse and refine them over time.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Module Completion -->
+                <div class="flex items-center justify-between bg-gray-50 rounded-xl p-6">
+                    <button onclick="markComplete('module3')" id="complete-module3" class="check-complete bg-gray-200 hover:bg-green-500 hover:text-white px-6 py-3 rounded-lg font-medium transition-all">
+                        <i class="fas fa-check mr-2"></i>Mark Complete
+                    </button>
+                    <button onclick="navigateToModule('module4')" class="text-gold hover:text-navy font-medium">
+                        Next: Luxury AI Strategies <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 4: Luxury AI Strategies -->
+        <section id="module4" class="module hidden fade-in">
+            <div class="bg-navy text-white py-12 px-8">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex items-center gap-2 text-gold mb-4">
+                        <span class="text-sm uppercase tracking-wider">Module 4</span>
+                    </div>
+                    <h1 class="font-display text-3xl md:text-4xl font-bold mb-4">Luxury AI Strategies</h1>
+                    <p class="text-gray-300">Specific techniques for high-net-worth client service</p>
+                </div>
+            </div>
+            
+            <div class="max-w-4xl mx-auto px-8 py-12">
+                <!-- Strategy 1 -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">
+                        <i class="fas fa-gem text-gold mr-2"></i>Strategy 1: Personalized Property Matching
+                    </h2>
+                    <p class="text-gray-700 mb-6">
+                        High-net-worth clients don't want to see 50 listings. They want 3-5 perfect matches with thoughtful explanations of why each fits their lifestyle.
+                    </p>
+                    
+                    <div class="prompt-box best-prompt rounded-xl p-6 mb-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full">SAMPLE PROMPT</span>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 font-mono text-sm">
+                            "I'm a luxury real estate agent creating a curated property selection for a specific client.<br><br>
+                            CLIENT PROFILE:<br>
+                            - Tech founder, sold company for $50M+<br>
+                            - Wife is a surgeon at Swedish Medical<br>
+                            - Two teenagers (16, 14) both competitive swimmers<br>
+                            - They entertain frequently, host 20-30 person gatherings<br>
+                            - He works from home 3 days/week, needs dedicated office<br>
+                            - They have a boat (36ft) and want moorage<br>
+                            - Budget: $6-10M<br><br>
+                            PROPERTIES I'M CONSIDERING (brief descriptions of 5 listings)<br><br>
+                            For each property, help me write a 2-paragraph personalized explanation of:<br>
+                            1. Why this property specifically fits their lifestyle needs<br>
+                            2. Any potential concerns they should consider<br><br>
+                            Make it feel personally curated, not like a generic listing description."
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Strategy 2 -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">
+                        <i class="fas fa-user-tie text-gold mr-2"></i>Strategy 2: Pre-Meeting Intelligence Briefings
+                    </h2>
+                    <p class="text-gray-700 mb-6">
+                        Before meeting any high-net-worth prospect, create a comprehensive briefing that helps you connect on a personal level.
+                    </p>
+                    
+                    <div class="prompt-box best-prompt rounded-xl p-6 mb-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full">SAMPLE PROMPT</span>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 font-mono text-sm">
+                            "Help me prepare an intelligence briefing for a client meeting. I'll be meeting with:<br><br>
+                            - Name: [Use publicly available info only]<br>
+                            - Role: CFO at major tech company<br>
+                            - Background: MBA from Wharton, previously at Goldman Sachs<br>
+                            - Interests: Marathon running, wine collecting (based on LinkedIn)<br><br>
+                            Create a briefing that includes:<br>
+                            1. Conversation starters based on their background<br>
+                            2. Financial perspective they likely bring to real estate decisions<br>
+                            3. Questions that would demonstrate I understand their world<br>
+                            4. Potential concerns someone with their background might have<br>
+                            5. How to position real estate as an investment (speaking their language)<br><br>
+                            Keep it ethical—only use information they've made public. Help me build rapport, not invade privacy."
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Strategy 3 -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">
+                        <i class="fas fa-file-alt text-gold mr-2"></i>Strategy 3: Luxury Listing Presentations
+                    </h2>
+                    <p class="text-gray-700 mb-6">
+                        Create compelling listing presentations that demonstrate your expertise and justify premium pricing.
+                    </p>
+                    
+                    <div class="prompt-box best-prompt rounded-xl p-6 mb-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full">SAMPLE PROMPT</span>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 font-mono text-sm">
+                            "I'm preparing a listing presentation for a $7.5M waterfront home in Clyde Hill. The owners are a retired Microsoft executive and his wife.<br><br>
+                            Help me create talking points for:<br><br>
+                            1. MARKET POSITIONING<br>
+                            - Why now is strategic timing for this sale<br>
+                            - How to position against competing luxury listings<br>
+                            - Target buyer profile for this specific property<br><br>
+                            2. PRICING STRATEGY<br>
+                            - Framework for discussing price with sophisticated sellers<br>
+                            - How to present the premium pricing we're recommending<br><br>
+                            3. MARKETING APPROACH<br>
+                            - Channels for reaching UHNW buyers (local and international)<br>
+                            - Why discretion might be important and how we maintain it<br>
+                            - Timeline and milestone expectations<br><br>
+                            4. OBJECTION HANDLING<br>
+                            - Common concerns from luxury sellers<br>
+                            - How to address 'why should we list with you?'<br><br>
+                            Format as concise bullet points I can reference during the presentation."
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Strategy 4 -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">
+                        <i class="fas fa-globe text-gold mr-2"></i>Strategy 4: Relocation Concierge Support
+                    </h2>
+                    <p class="text-gray-700 mb-6">
+                        Many Seattle luxury buyers are relocating from other cities. AI can help you become their ultimate guide.
+                    </p>
+                    
+                    <div class="prompt-box best-prompt rounded-xl p-6 mb-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full">SAMPLE PROMPT</span>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 font-mono text-sm">
+                            "Create a comprehensive Seattle relocation guide for a family moving from Manhattan. They're used to Upper East Side living and have a $5M+ budget.<br><br>
+                            Include:<br><br>
+                            1. NEIGHBORHOOD TRANSLATIONS<br>
+                            - 'If you loved [NYC neighborhood], you'll appreciate [Seattle neighborhood] because...'<br>
+                            - Match lifestyle expectations to Seattle equivalents<br><br>
+                            2. LIFESTYLE ADJUSTMENTS<br>
+                            - What will feel familiar vs. different<br>
+                            - Common surprises for NYC transplants<br>
+                            - Seattle etiquette and cultural norms<br><br>
+                            3. PRACTICAL TRANSITIONS<br>
+                            - Schools comparison (private school landscape)<br>
+                            - How 'walkable' translates in Seattle<br>
+                            - Car-dependent vs. car-optional neighborhoods<br><br>
+                            4. CONNECTIONS<br>
+                            - Where NYC transplants tend to find community<br>
+                            - Clubs, organizations, social scenes<br><br>
+                            Make this feel like insider knowledge from a local, not a tourist guide."
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Module Completion -->
+                <div class="flex items-center justify-between bg-gray-50 rounded-xl p-6">
+                    <button onclick="markComplete('module4')" id="complete-module4" class="check-complete bg-gray-200 hover:bg-green-500 hover:text-white px-6 py-3 rounded-lg font-medium transition-all">
+                        <i class="fas fa-check mr-2"></i>Mark Complete
+                    </button>
+                    <button onclick="navigateToModule('module5')" class="text-gold hover:text-navy font-medium">
+                        Next: Market Intelligence <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 5: Market Intelligence -->
+        <section id="module5" class="module hidden fade-in">
+            <div class="bg-navy text-white py-12 px-8">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex items-center gap-2 text-gold mb-4">
+                        <span class="text-sm uppercase tracking-wider">Module 5</span>
+                    </div>
+                    <h1 class="font-display text-3xl md:text-4xl font-bold mb-4">Market Intelligence</h1>
+                    <p class="text-gray-300">Using AI to analyze trends and uncover opportunities</p>
+                </div>
+            </div>
+            
+            <div class="max-w-4xl mx-auto px-8 py-12">
+                <!-- Data Analysis -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">
+                        <i class="fas fa-database text-gold mr-2"></i>Turning Data Into Insights
+                    </h2>
+                    <p class="text-gray-700 mb-6">
+                        AI excels at analyzing large datasets and finding patterns. Here's how to leverage this for market intelligence.
+                    </p>
+                    
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-6">
+                        <h4 class="font-semibold text-blue-800 mb-3"><i class="fas fa-info-circle mr-2"></i>Important Note</h4>
+                        <p class="text-gray-700">AI tools like ChatGPT can analyze data you paste or upload. Export your MLS data, market reports, or spreadsheets and ask AI to find insights. Always verify the conclusions independently.</p>
+                    </div>
+                    
+                    <div class="prompt-box best-prompt rounded-xl p-6 mb-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full">SAMPLE PROMPT</span>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 font-mono text-sm">
+                            "I'm uploading the last 12 months of luxury home sales data from the Seattle Eastside ($3M+). <br><br>
+                            Analyze this data and tell me:<br><br>
+                            1. TRENDS<br>
+                            - Average days on market by price range<br>
+                            - Price per square foot changes quarter over quarter<br>
+                            - Which neighborhoods are appreciating fastest<br><br>
+                            2. PATTERNS<br>
+                            - Are there seasonal patterns in luxury sales?<br>
+                            - What property features correlate with faster sales?<br>
+                            - Price reduction patterns—how often and how much?<br><br>
+                            3. OPPORTUNITIES<br>
+                            - Undervalued neighborhoods based on this data<br>
+                            - Price points with the most buyer activity<br>
+                            - Gaps in inventory that suggest unmet demand<br><br>
+                            Present findings as a market report I could share with sellers."
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Competitive Analysis -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">
+                        <i class="fas fa-balance-scale text-gold mr-2"></i>Competitive Property Analysis
+                    </h2>
+                    
+                    <div class="prompt-box best-prompt rounded-xl p-6 mb-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full">SAMPLE PROMPT</span>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 font-mono text-sm">
+                            "I'm preparing a CMA for a $4.2M listing in Medina. Here are 5 comparable properties that sold in the last 6 months:<br><br>
+                            [Paste property details: address, price, sqft, beds/baths, lot size, key features, days on market, final sale price vs. list]<br><br>
+                            Help me:<br><br>
+                            1. ANALYSIS<br>
+                            - Identify the key differentiators that affected pricing<br>
+                            - Calculate meaningful price-per-sqft comparisons<br>
+                            - Note any outliers and explain why<br><br>
+                            2. POSITIONING<br>
+                            - How should my listing be positioned relative to these comps?<br>
+                            - What features justify a premium? What might discount it?<br>
+                            - Recommended list price range with rationale<br><br>
+                            3. PRESENTATION<br>
+                            - Write a summary paragraph I can use in my CMA document<br>
+                            - Key talking points for presenting to the seller<br>
+                            - Anticipated questions and how to address them"
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Investment Analysis -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">
+                        <i class="fas fa-chart-line text-gold mr-2"></i>Investment Perspective Analysis
+                    </h2>
+                    <p class="text-gray-700 mb-6">
+                        Many HNWI clients view real estate as an investment. Help them think through the financial implications.
+                    </p>
+                    
+                    <div class="prompt-box best-prompt rounded-xl p-6 mb-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full">SAMPLE PROMPT</span>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 font-mono text-sm">
+                            "My client is considering a $6M waterfront property as both a primary residence and long-term investment. Help me prepare an investment-focused analysis:<br><br>
+                            PROPERTY DETAILS:<br>
+                            - Waterfront lot in Hunts Point<br>
+                            - 4,800 sqft main house + 800 sqft guest house<br>
+                            - 0.8 acre lot, 75ft of waterfront<br>
+                            - Built 2015, high-end finishes<br><br>
+                            ANALYZE:<br>
+                            1. What factors typically drive appreciation for Hunts Point waterfront?<br>
+                            2. How does limited waterfront inventory affect long-term value?<br>
+                            3. What are the risks to consider (market, environmental, regulatory)?<br>
+                            4. How would you frame 'investment value' vs. 'lifestyle value' for this property?<br>
+                            5. Questions a sophisticated investor might ask, and how to address them<br><br>
+                            Note: I understand you can't predict markets. Help me frame the analysis, not make predictions."
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Module Completion -->
+                <div class="flex items-center justify-between bg-gray-50 rounded-xl p-6">
+                    <button onclick="markComplete('module5')" id="complete-module5" class="check-complete bg-gray-200 hover:bg-green-500 hover:text-white px-6 py-3 rounded-lg font-medium transition-all">
+                        <i class="fas fa-check mr-2"></i>Mark Complete
+                    </button>
+                    <button onclick="navigateToModule('module6')" class="text-gold hover:text-navy font-medium">
+                        Next: Advanced Applications <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 6: Advanced Applications -->
+        <section id="module6" class="module hidden fade-in">
+            <div class="bg-navy text-white py-12 px-8">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex items-center gap-2 text-gold mb-4">
+                        <span class="text-sm uppercase tracking-wider">Module 6</span>
+                    </div>
+                    <h1 class="font-display text-3xl md:text-4xl font-bold mb-4">Advanced Applications</h1>
+                    <p class="text-gray-300">Negotiation prep, due diligence, and client retention strategies</p>
+                </div>
+            </div>
+            
+            <div class="max-w-4xl mx-auto px-8 py-12">
+                <!-- Negotiation Prep -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">
+                        <i class="fas fa-handshake text-gold mr-2"></i>Negotiation Preparation
+                    </h2>
+                    <p class="text-gray-700 mb-6">
+                        AI can help you prepare for negotiations by anticipating counterarguments and developing strategies.
+                    </p>
+                    
+                    <div class="prompt-box best-prompt rounded-xl p-6 mb-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full">SAMPLE PROMPT</span>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 font-mono text-sm">
+                            "I'm representing a buyer making an offer on a $5.5M home in Laurelhurst. Help me prepare for negotiation:<br><br>
+                            SITUATION:<br>
+                            - Listed at $5.5M, on market 45 days<br>
+                            - One previous offer fell through (inspection issues)<br>
+                            - My buyer's budget is firm at $5.1M<br>
+                            - Home needs $150K in deferred maintenance<br>
+                            - Seller is an estate (deceased owner)<br><br>
+                            HELP ME WITH:<br>
+                            1. Strategy for positioning the $5.1M offer<br>
+                            2. Key points to emphasize (buyer qualifications, quick close, etc.)<br>
+                            3. Anticipated seller/listing agent objections and responses<br>
+                            4. Creative terms that might bridge the price gap<br>
+                            5. Walk-away points I should establish with my buyer<br>
+                            6. Escalation tactics if they counter<br><br>
+                            Present as a negotiation prep document I can review before the call."
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Due Diligence Support -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">
+                        <i class="fas fa-clipboard-check text-gold mr-2"></i>Due Diligence Support
+                    </h2>
+                    
+                    <div class="prompt-box best-prompt rounded-xl p-6 mb-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full">SAMPLE PROMPT</span>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 font-mono text-sm">
+                            "I'm helping my buyer understand an inspection report for a 1985 waterfront home. Here are the key findings:<br><br>
+                            [Paste relevant sections of inspection report]<br><br>
+                            Help me:<br>
+                            1. Translate technical findings into plain English<br>
+                            2. Categorize issues by severity (critical, moderate, minor, cosmetic)<br>
+                            3. Estimate repair cost ranges for each category<br>
+                            4. Identify which issues are typical for 1985 waterfront construction<br>
+                            5. Flag any issues that should involve specialist inspections<br>
+                            6. Suggest repair request priorities for negotiation<br><br>
+                            Note: I'll verify costs with contractors. Help me understand and explain the report."
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Client Retention -->
+                <div class="mb-12">
+                    <h2 class="font-display text-2xl font-bold text-navy mb-6">
+                        <i class="fas fa-heart text-gold mr-2"></i>Long-Term Client Retention
+                    </h2>
+                    <p class="text-gray-700 mb-6">
+                        AI can help you maintain relationships with past clients and generate referrals.
+                    </p>
+                    
+                    <div class="prompt-box best-prompt rounded-xl p-6 mb-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full">SAMPLE PROMPT</span>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 font-mono text-sm">
+                            "I want to create a personalized annual home ownership report for past clients. Help me design a template that includes:<br><br>
+                            1. HOME VALUE UPDATE<br>
+                            - Estimated current value based on market trends<br>
+                            - How to present this information responsibly<br><br>
+                            2. NEIGHBORHOOD NEWS<br>
+                            - Recent sales in their area<br>
+                            - Local developments or changes<br><br>
+                            3. HOMEOWNER TIPS<br>
+                            - Seasonal maintenance reminders<br>
+                            - Value-adding improvements to consider<br><br>
+                            4. PERSONAL TOUCH<br>
+                            - Anniversary acknowledgment of their purchase<br>
+                            - Subtle referral request language<br><br>
+                            Make it feel like a valuable service, not a sales pitch. They should look forward to receiving it."
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Congratulations -->
+                <div class="bg-gradient-to-r from-gold to-amber-400 text-navy rounded-xl p-8 mb-8">
+                    <div class="text-center">
+                        <i class="fas fa-trophy text-5xl mb-4"></i>
+                        <h3 class="font-display text-2xl font-bold mb-4">Congratulations!</h3>
+                        <p class="mb-4">You've completed the core training modules. You now have the foundation to leverage AI effectively in your luxury real estate practice.</p>
+                        <p class="text-sm">Don't forget to explore the Glossary and Prompt Library for quick reference.</p>
+                    </div>
+                </div>
+                
+                <!-- Module Completion -->
+                <div class="flex items-center justify-between bg-gray-50 rounded-xl p-6">
+                    <button onclick="markComplete('module6')" id="complete-module6" class="check-complete bg-gray-200 hover:bg-green-500 hover:text-white px-6 py-3 rounded-lg font-medium transition-all">
+                        <i class="fas fa-check mr-2"></i>Mark Complete
+                    </button>
+                    <button onclick="navigateToModule('glossary')" class="text-gold hover:text-navy font-medium">
+                        View Glossary <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Glossary -->
+        <section id="glossary" class="module hidden fade-in">
+            <div class="bg-navy text-white py-12 px-8">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex items-center gap-2 text-gold mb-4">
+                        <span class="text-sm uppercase tracking-wider">Reference</span>
+                    </div>
+                    <h1 class="font-display text-3xl md:text-4xl font-bold mb-4">AI Glossary</h1>
+                    <p class="text-gray-300">20 essential terms every real estate professional should know</p>
+                </div>
+            </div>
+            
+            <div class="max-w-4xl mx-auto px-8 py-12">
+                <div class="grid gap-4">
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">1. Artificial Intelligence (AI)</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>Computer systems that can perform tasks typically requiring human intelligence, such as understanding language, recognizing patterns, and making decisions. In real estate, AI helps with everything from property valuations to client communication.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">2. Large Language Model (LLM)</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>The underlying technology behind tools like ChatGPT and Claude. LLMs are trained on vast amounts of text and can generate human-like responses. Think of them as sophisticated autocomplete systems that can write, analyze, and converse.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">3. Prompt</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>The instruction or question you give to an AI system. Better prompts lead to better outputs. Crafting effective prompts is a skill that improves with practice—and is covered extensively in Module 3.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">4. Hallucination</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>When AI generates information that sounds plausible but is factually incorrect. AI may confidently cite statistics, quote sources, or describe properties that don't exist. Always verify AI-generated facts before using them with clients.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">5. Context Window</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>The amount of text an AI can consider at once—like its working memory. Longer context windows allow AI to reference more information in a single conversation. Important when pasting long documents or having extended conversations.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">6. Token</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>The basic unit AI uses to process text—roughly equivalent to 3/4 of a word. AI systems have token limits for input and output. Understanding tokens helps you know why some requests may be too long or why outputs get cut off.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">7. Fine-tuning</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>Training an AI model on specialized data to make it better at specific tasks. Some companies fine-tune models on real estate data to create specialized tools. You benefit from this when using real estate-specific AI products.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">8. Natural Language Processing (NLP)</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>Technology that helps computers understand and generate human language. NLP powers AI's ability to understand your questions and respond in natural, conversational text rather than computer code.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">9. Generative AI</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>AI that creates new content—text, images, video, or audio—rather than just analyzing existing content. ChatGPT generates text; Midjourney generates images. This is the type of AI you'll use most in real estate marketing.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">10. Machine Learning (ML)</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>A subset of AI where systems learn from data rather than being explicitly programmed. Zillow's Zestimate uses ML to predict home values by learning from millions of transactions. ML powers many real estate valuation tools.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">11. API (Application Programming Interface)</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>A way for different software systems to communicate. When your CRM automatically enriches contact data or your website chatbot answers questions, APIs are connecting AI services to your tools behind the scenes.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">12. Chatbot</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>An AI-powered conversational interface that can answer questions and perform tasks. Modern chatbots on real estate websites can qualify leads, answer property questions, and schedule showings 24/7.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">13. Virtual Staging</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>Using AI to digitally add furniture and decor to photos of empty rooms. Much cheaper than physical staging, virtual staging helps buyers visualize potential. AI-powered tools can now produce photorealistic results in minutes.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">14. Predictive Analytics</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>Using data and AI to forecast future outcomes. In real estate, this might predict which homeowners are likely to sell, which neighborhoods will appreciate, or how long a property will take to sell.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">15. Sentiment Analysis</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>AI's ability to detect emotions and attitudes in text. Useful for analyzing client emails, reviews, or social media mentions to understand how people feel about properties, neighborhoods, or your services.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">16. Training Data</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>The information used to teach an AI system. ChatGPT was trained on books, websites, and other text. The quality and scope of training data affects what AI knows and how well it performs on different topics.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">17. Prompt Engineering</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>The practice of designing effective prompts to get the best results from AI. It's both an art and a science, involving specific techniques like providing context, defining roles, and structuring requests clearly.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">18. Temperature (in AI)</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>A setting that controls how creative or random AI responses are. Low temperature = more focused and predictable; high temperature = more creative and varied. For business writing, lower temperature is usually better.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">19. Multimodal AI</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>AI that can process multiple types of input—text, images, audio, video. You can show these systems a property photo and ask questions about it, or have it analyze listing images for marketing opportunities.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glossary-term bg-white border border-gray-200 rounded-xl p-6" onclick="toggleGlossary(this)">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-navy">20. AI Agent</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                        </div>
+                        <div class="glossary-content hidden mt-4 text-gray-600">
+                            <p>An AI system that can take actions autonomously—not just answer questions, but actually do things like send emails, update databases, or book appointments. The future of AI assistants in real estate will likely include agents that handle routine tasks independently.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prompt Library -->
+        <section id="prompts" class="module hidden fade-in">
+            <div class="bg-navy text-white py-12 px-8">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex items-center gap-2 text-gold mb-4">
+                        <span class="text-sm uppercase tracking-wider">Reference</span>
+                    </div>
+                    <h1 class="font-display text-3xl md:text-4xl font-bold mb-4">Prompt Library</h1>
+                    <p class="text-gray-300">Copy-and-customize prompts for common luxury real estate scenarios</p>
+                </div>
+            </div>
+            
+            <div class="max-w-4xl mx-auto px-8 py-12">
+                <p class="text-gray-600 mb-8">Click any prompt to copy it to your clipboard. Customize the bracketed sections with your specific details.</p>
+                
+                <!-- Category: Listings -->
+                <div class="mb-10">
+                    <h2 class="font-display text-xl font-bold text-navy mb-4 flex items-center gap-2">
+                        <i class="fas fa-home text-gold"></i> Listing & Marketing Prompts
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="prompt-library-item bg-white border border-gray-200 rounded-xl p-6 cursor-pointer hover:border-gold transition-colors" onclick="copyPrompt(this)">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-navy">Luxury Property Description</h4>
+                                <span class="text-xs text-gray-400"><i class="fas fa-copy mr-1"></i>Click to copy</span>
+                            </div>
+                            <div class="prompt-text font-mono text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">You are a luxury real estate copywriter specializing in Seattle's most exclusive properties. Write a compelling property description for: [PROPERTY DETAILS]. Target buyer: [BUYER PROFILE]. Format: 200 words for MLS, then a 50-word social teaser. Tone: Sophisticated but warm, emphasize exclusivity without being pretentious.</div>
+                        </div>
+                        
+                        <div class="prompt-library-item bg-white border border-gray-200 rounded-xl p-6 cursor-pointer hover:border-gold transition-colors" onclick="copyPrompt(this)">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-navy">Social Media Series</h4>
+                                <span class="text-xs text-gray-400"><i class="fas fa-copy mr-1"></i>Click to copy</span>
+                            </div>
+                            <div class="prompt-text font-mono text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">Create a 5-post social media series for a luxury listing at [ADDRESS]. Each post should highlight a different aspect: 1) First impression/curb appeal, 2) Kitchen/entertaining, 3) Primary suite, 4) Outdoor living, 5) Neighborhood/lifestyle. Include hashtag suggestions for Seattle luxury real estate. Keep each post under 150 words.</div>
+                        </div>
+                        
+                        <div class="prompt-library-item bg-white border border-gray-200 rounded-xl p-6 cursor-pointer hover:border-gold transition-colors" onclick="copyPrompt(this)">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-navy">Open House Follow-Up Emails</h4>
+                                <span class="text-xs text-gray-400"><i class="fas fa-copy mr-1"></i>Click to copy</span>
+                            </div>
+                            <div class="prompt-text font-mono text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">Write 3 different follow-up emails for luxury open house attendees: 1) For someone who seemed very interested, 2) For someone who had concerns about [SPECIFIC CONCERN], 3) For someone who was just browsing. Property: [DETAILS]. Keep emails personal and avoid pushy sales language. Each should be 100-150 words.</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Category: Client Service -->
+                <div class="mb-10">
+                    <h2 class="font-display text-xl font-bold text-navy mb-4 flex items-center gap-2">
+                        <i class="fas fa-users text-gold"></i> Client Service Prompts
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="prompt-library-item bg-white border border-gray-200 rounded-xl p-6 cursor-pointer hover:border-gold transition-colors" onclick="copyPrompt(this)">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-navy">Buyer Consultation Prep</h4>
+                                <span class="text-xs text-gray-400"><i class="fas fa-copy mr-1"></i>Click to copy</span>
+                            </div>
+                            <div class="prompt-text font-mono text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">I'm preparing for a buyer consultation with [CLIENT BACKGROUND]. Budget: [RANGE]. Looking in [NEIGHBORHOODS]. Help me: 1) Create 10 discovery questions to understand their priorities, 2) Identify potential concerns based on their profile, 3) Suggest 3 neighborhoods that might fit their needs, 4) Prepare talking points about the current Seattle luxury market.</div>
+                        </div>
+                        
+                        <div class="prompt-library-item bg-white border border-gray-200 rounded-xl p-6 cursor-pointer hover:border-gold transition-colors" onclick="copyPrompt(this)">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-navy">Difficult Conversation Script</h4>
+                                <span class="text-xs text-gray-400"><i class="fas fa-copy mr-1"></i>Click to copy</span>
+                            </div>
+                            <div class="prompt-text font-mono text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">Help me prepare for a difficult conversation with my client about [SITUATION - e.g., price reduction, offer rejection, inspection issues]. I need: 1) How to open the conversation with empathy, 2) Key points to communicate clearly, 3) Anticipated objections and responses, 4) How to end on a positive, forward-looking note. Keep the tone professional but caring.</div>
+                        </div>
+                        
+                        <div class="prompt-library-item bg-white border border-gray-200 rounded-xl p-6 cursor-pointer hover:border-gold transition-colors" onclick="copyPrompt(this)">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-navy">Relocation Package</h4>
+                                <span class="text-xs text-gray-400"><i class="fas fa-copy mr-1"></i>Click to copy</span>
+                            </div>
+                            <div class="prompt-text font-mono text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">Create a comprehensive Seattle relocation guide for someone moving from [CITY]. They are [FAMILY SITUATION] with a [BUDGET]. Include: 1) Neighborhood recommendations matching their lifestyle, 2) Schools/education options, 3) Cultural transition tips, 4) Hidden gems only locals know, 5) Timeline for house hunting in Seattle. Make it feel like insider knowledge.</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Category: Analysis -->
+                <div class="mb-10">
+                    <h2 class="font-display text-xl font-bold text-navy mb-4 flex items-center gap-2">
+                        <i class="fas fa-chart-line text-gold"></i> Analysis Prompts
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="prompt-library-item bg-white border border-gray-200 rounded-xl p-6 cursor-pointer hover:border-gold transition-colors" onclick="copyPrompt(this)">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-navy">CMA Support</h4>
+                                <span class="text-xs text-gray-400"><i class="fas fa-copy mr-1"></i>Click to copy</span>
+                            </div>
+                            <div class="prompt-text font-mono text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">I'm preparing a CMA for [PROPERTY ADDRESS]. Here are 5 comparable sales: [PASTE COMP DATA]. Help me: 1) Identify key differentiators affecting pricing, 2) Explain adjustments I should make for each comp, 3) Write a summary paragraph for my CMA document, 4) Prepare talking points for presenting to the seller. Note: I'll verify all figures independently.</div>
+                        </div>
+                        
+                        <div class="prompt-library-item bg-white border border-gray-200 rounded-xl p-6 cursor-pointer hover:border-gold transition-colors" onclick="copyPrompt(this)">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-navy">Investment Analysis Framework</h4>
+                                <span class="text-xs text-gray-400"><i class="fas fa-copy mr-1"></i>Click to copy</span>
+                            </div>
+                            <div class="prompt-text font-mono text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">My client is evaluating [PROPERTY] as an investment. Purchase price: [AMOUNT]. Help me create an analysis framework covering: 1) Factors affecting long-term appreciation in this location, 2) Risks to consider (market, regulatory, environmental), 3) How to frame ROI expectations realistically, 4) Comparison to alternative investments. I'll use this to guide discussion, not as financial advice.</div>
+                        </div>
+                        
+                        <div class="prompt-library-item bg-white border border-gray-200 rounded-xl p-6 cursor-pointer hover:border-gold transition-colors" onclick="copyPrompt(this)">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-navy">Inspection Report Summary</h4>
+                                <span class="text-xs text-gray-400"><i class="fas fa-copy mr-1"></i>Click to copy</span>
+                            </div>
+                            <div class="prompt-text font-mono text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">I'm reviewing an inspection report for my buyer. Here are the key findings: [PASTE FINDINGS]. Help me: 1) Categorize issues by severity, 2) Translate technical terms into plain English, 3) Estimate repair cost ranges, 4) Identify which items are normal wear vs. concerning, 5) Prioritize items for repair negotiations. I'll verify costs with contractors.</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Category: Negotiation -->
+                <div class="mb-10">
+                    <h2 class="font-display text-xl font-bold text-navy mb-4 flex items-center gap-2">
+                        <i class="fas fa-handshake text-gold"></i> Negotiation Prompts
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="prompt-library-item bg-white border border-gray-200 rounded-xl p-6 cursor-pointer hover:border-gold transition-colors" onclick="copyPrompt(this)">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-navy">Offer Strategy</h4>
+                                <span class="text-xs text-gray-400"><i class="fas fa-copy mr-1"></i>Click to copy</span>
+                            </div>
+                            <div class="prompt-text font-mono text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">I'm representing a buyer making an offer on [PROPERTY]. List price: [AMOUNT]. Days on market: [DAYS]. My client's budget: [BUDGET]. Known factors: [ANY INFO ABOUT SELLER MOTIVATION]. Help me: 1) Develop an offer strategy, 2) Suggest terms that might be appealing beyond price, 3) Anticipate counter-offer scenarios, 4) Prepare responses to common objections.</div>
+                        </div>
+                        
+                        <div class="prompt-library-item bg-white border border-gray-200 rounded-xl p-6 cursor-pointer hover:border-gold transition-colors" onclick="copyPrompt(this)">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-navy">Multiple Offer Situation</h4>
+                                <span class="text-xs text-gray-400"><i class="fas fa-copy mr-1"></i>Click to copy</span>
+                            </div>
+                            <div class="prompt-text font-mono text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">My buyer is competing in a multiple offer situation for [PROPERTY]. List price: [AMOUNT]. There are reportedly [NUMBER] other offers. My client's maximum: [BUDGET]. Help me: 1) Strategy for standing out beyond highest price, 2) Escalation clause considerations, 3) Personal touch elements that resonate with sellers, 4) Risk assessment at different offer levels.</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Copy notification -->
+                <div id="copyNotification" class="fixed bottom-8 right-8 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300">
+                    <i class="fas fa-check mr-2"></i>Prompt copied to clipboard!
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-navy-dark text-white py-8 px-8 mt-auto">
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="flex items-center justify-center gap-2 mb-4">
+                    <div class="w-8 h-8 bg-gold rounded-lg flex items-center justify-center">
+                        <i class="fas fa-brain text-navy text-sm"></i>
+                    </div>
+                    <span class="font-display text-lg text-gold">Applied AI Labs</span>
+                </div>
+                <p class="text-gray-400 text-sm mb-4">Empowering real estate professionals with practical AI skills</p>
+                <a href="https://www.appliedailabs.com" target="_blank" class="text-gold hover:text-gold-light transition-colors">
+                    Applied AI Labs
+                </a>
+                <p class="text-gray-500 text-xs mt-4">© 2025 Applied AI Labs. All rights reserved.</p>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // State management
+        let state = {
+            currentModule: 'welcome',
+            completedModules: [],
+            expandedGlossaryItems: []
+        };
+
+        // Load state from localStorage
+        function loadState() {
+            const saved = localStorage.getItem('realtorsAIAdvantage');
+            if (saved) {
+                state = JSON.parse(saved);
+                updateUI();
+            }
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            localStorage.setItem('realtorsAIAdvantage', JSON.stringify(state));
+        }
+
+        // Update UI based on state
+        function updateUI() {
+            // Update progress bar
+            const totalModules = 6;
+            const completed = state.completedModules.length;
+            const percent = Math.round((completed / totalModules) * 100);
+            
+            document.getElementById('progressPercent').textContent = percent + '%';
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('modulesComplete').textContent = `${completed} of ${totalModules} modules completed`;
+
+            // Update checkmarks in sidebar
+            state.completedModules.forEach(module => {
+                const checkmark = document.getElementById(`check-${module}`);
+                if (checkmark) {
+                    checkmark.classList.remove('hidden');
+                }
+                
+                const completeBtn = document.getElementById(`complete-${module}`);
+                if (completeBtn) {
+                    completeBtn.classList.add('completed');
+                    completeBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Completed';
+                }
+            });
+
+            // Show current module
+            showModule(state.currentModule);
+        }
+
+        // Navigate to module
+        function navigateToModule(moduleId) {
+            state.currentModule = moduleId;
+            saveState();
+            showModule(moduleId);
+            
+            // Update sidebar active state
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.module === moduleId) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+
+            // Close mobile menu if open
+            document.getElementById('sidebar').classList.remove('open');
+        }
+
+        // Show specific module
+        function showModule(moduleId) {
+            document.querySelectorAll('.module').forEach(module => {
+                module.classList.add('hidden');
+            });
+            
+            const targetModule = document.getElementById(moduleId);
+            if (targetModule) {
+                targetModule.classList.remove('hidden');
+            }
+        }
+
+        // Mark module complete
+        function markComplete(moduleId) {
+            if (!state.completedModules.includes(moduleId)) {
+                state.completedModules.push(moduleId);
+                saveState();
+                updateUI();
+            }
+        }
+
+        // Toggle glossary item
+        function toggleGlossary(element) {
+            const content = element.querySelector('.glossary-content');
+            const icon = element.querySelector('.fa-chevron-down');
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Copy prompt to clipboard
+        function copyPrompt(element) {
+            const promptText = element.querySelector('.prompt-text').textContent;
+            navigator.clipboard.writeText(promptText).then(() => {
+                const notification = document.getElementById('copyNotification');
+                notification.classList.remove('translate-y-20', 'opacity-0');
+                
+                setTimeout(() => {
+                    notification.classList.add('translate-y-20', 'opacity-0');
+                }, 2000);
+            });
+        }
+
+        // Reset progress
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+                state = {
+                    currentModule: 'welcome',
+                    completedModules: [],
+                    expandedGlossaryItems: []
+                };
+                saveState();
+                location.reload();
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+
+            // Sidebar navigation
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navigateToModule(link.dataset.module);
+                });
+            });
+
+            // Mobile menu toggle
+            document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.toggle('open');
+            });
+
+            // Reset progress button
+            document.getElementById('resetProgress').addEventListener('click', resetProgress);
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', (e) => {
+                const sidebar = document.getElementById('sidebar');
+                const menuBtn = document.getElementById('mobileMenuBtn');
+                
+                if (window.innerWidth < 1024 && 
+                    !sidebar.contains(e.target) && 
+                    !menuBtn.contains(e.target) &&
+                    sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                }
+            });
+        });
+
+        // Make functions globally available
+        window.navigateToModule = navigateToModule;
+        window.markComplete = markComplete;
+        window.toggleGlossary = toggleGlossary;
+        window.copyPrompt = copyPrompt;
+    </script>
+</body>
+</html>

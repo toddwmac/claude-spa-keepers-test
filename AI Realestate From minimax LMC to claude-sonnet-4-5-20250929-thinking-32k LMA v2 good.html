@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Training for Seattle Luxury Real Estate Agents</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #1a365d;
+            --color-primary-light: #2c5282;
+            --color-secondary: #744210;
+            --color-accent: #2f855a;
+            --color-accent-light: #48bb78;
+            --color-background: #fafafa;
+            --color-surface: #ffffff;
+            --color-text-primary: #1a202c;
+            --color-text-secondary: #4a5568;
+            --color-text-muted: #718096;
+            --color-border: #e2e8f0;
+            --color-success: #2f855a;
+            --color-warning: #c05621;
+            --color-error: #c53030;
+            --font-heading: 'Crimson Text', Georgia, serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --transition: all 0.2s ease;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 18px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--color-text-primary);
+            background-color: var(--color-background);
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            line-height: 1.3;
+            color: var(--color-primary);
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: var(--spacing-lg); }
+        h2 { font-size: 2rem; margin-bottom: var(--spacing-md); }
+        h3 { font-size: 1.5rem; margin-bottom: var(--spacing-sm); }
+        h4 { font-size: 1.25rem; margin-bottom: var(--spacing-xs); }
+
+        p { margin-bottom: var(--spacing-sm); }
+
+        a {
+            color: var(--color-primary-light);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: var(--transition);
+        }
+
+        a:hover { color: var(--color-primary); }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        .section {
+            padding: var(--spacing-xl) 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .section:last-child { border-bottom: none; }
+
+        .header {
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: var(--spacing-sm) 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            color: var(--color-primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--color-primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: var(--spacing-xs);
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 2px solid transparent;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .nav-btn:hover {
+            background: var(--color-background);
+            color: var(--color-primary);
+        }
+
+        .nav-btn.active {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .nav-btn.completed::after {
+            content: ' ✓';
+            color: var(--color-accent);
+        }
+
+        .progress-container {
+            background: var(--color-border);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: var(--spacing-md) 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-accent), var(--color-accent-light));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            text-align: right;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 500;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary { background: var(--color-primary); color: white; }
+        .btn-primary:hover { background: var(--color-primary-light); transform: translateY(-1px); }
+        .btn-secondary { background: var(--color-surface); color: var(--color-primary); border: 2px solid var(--color-primary); }
+        .btn-secondary:hover { background: var(--color-background); }
+        .btn-accent { background: var(--color-accent); color: white; }
+        .btn-accent:hover { background: var(--color-accent-light); }
+        .btn-large { padding: var(--spacing-md) var(--spacing-xl); font-size: 1.1rem; }
+
+        .hero {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+            color: white;
+            padding: var(--spacing-xl) 0;
+            text-align: center;
+        }
+
+        .hero h1 { color: white; font-size: 2.5rem; }
+        .hero p { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto var(--spacing-lg); }
+        .hero .btn-primary { background: white; color: var(--color-primary); }
+        .hero .btn-primary:hover { background: var(--color-background); }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-md);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .comparison {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .comparison-header {
+            display: grid;
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .comparison-header > div {
+            padding: var(--spacing-md);
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .comparison-header > div:first-child { text-align: left; }
+
+        .comparison-row {
+            display: grid;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .comparison-row:last-child { border-bottom: none; }
+
+        .comparison-row > div {
+            padding: var(--spacing-md);
+            display: flex;
+            align-items: center;
+        }
+
+        .comparison-label { font-weight: 500; background: var(--color-background); }
+
+        .prompt-box {
+            background: var(--color-background);
+            border: 2px dashed var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-md) 0;
+        }
+
+        .prompt-input {
+            width: 100%;
+            padding: var(--spacing-md);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            resize: vertical;
+            min-height: 120px;
+            transition: var(--transition);
+        }
+
+        .prompt-input:focus { outline: none; border-color: var(--color-primary); }
+
+        .response-box {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            margin-top: var(--spacing-md);
+            display: none;
+        }
+
+        .response-box.visible { display: block; animation: fadeIn 0.3s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .exercise {
+            background: var(--color-surface);
+            border-left: 4px solid var(--color-accent);
+            padding: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+        }
+
+        .exercise-title {
+            font-weight: 600;
+            color: var(--color-accent);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .tip {
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .tip-good { background: #fef3c7; border-left: 4px solid #d69e2e; }
+        .tip-better { background: #dbeafe; border-left: 4px solid #3182ce; }
+        .tip-best { background: #d1fae5; border-left: 4px solid #38a169; }
+
+        .tip-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .module-content { display: none; }
+        .module-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+        .checkpoint {
+            background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%);
+            border: 1px solid #90cdf4;
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .checkpoint-title {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .footer {
+            background: var(--color-primary);
+            color: white;
+            padding: var(--spacing-xl) 0;
+            margin-top: var(--spacing-xl);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .footer p { opacity: 0.8; margin: 0; }
+
+        .sandbox {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .sandbox-output {
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            min-height: 200px;
+            border-top: 3px solid var(--color-accent);
+            margin-top: var(--spacing-md);
+        }
+
+        .testimonial {
+            background: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin: var(--spacing-md) 0;
+            border-left: 4px solid var(--color-accent);
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            margin-top: var(--spacing-sm);
+            color: var(--color-primary);
+        }
+
+        .local-data {
+            background: #f0f9ff;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+            border-left: 4px solid var(--color-primary-light);
+        }
+
+        .local-data h4 { color: var(--color-primary); margin-bottom: var(--spacing-xs); }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--color-background);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        select, textarea, input[type="text"] {
+            width: 100%;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            font-family: var(--font-body);
+            font-size: 1rem;
+        }
+
+        select:focus, textarea:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        label { display: block; margin-bottom: var(--spacing-sm); font-weight: 500; }
+
+        .prompt-container {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-md) 0;
+        }
+
+        .improvement {
+            color: var(--color-accent);
+            font-weight: 600;
+            margin-top: var(--spacing-sm);
+        }
+
+        @media (max-width: 768px) {
+            html { font-size: 16px; }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            .header-content { flex-direction: column; align-items: flex-start; }
+            .nav { width: 100%; justify-content: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container header-content">
+            <a href="#" class="logo" onclick="navigateTo('welcome'); return false;">
+                <div class="logo-icon">🏠</div>
+                <span>AI for Seattle Luxury Real Estate</span>
+            </a>
+            <nav class="nav" role="navigation" aria-label="Main navigation">
+                <button class="nav-btn active" data-section="welcome">Welcome</button>
+                <button class="nav-btn" data-section="module1">Module 1</button>
+                <button class="nav-btn" data-section="module2">Module 2</button>
+                <button class="nav-btn" data-section="module3">Module 3</button>
+                <button class="nav-btn" data-section="module4">Module 4</button>
+                <button class="nav-btn" data-section="module5">Module 5</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Welcome Section -->
+        <section id="welcome" class="section module-content active">
+            <div class="hero">
+                <div class="container">
+                    <h1>AI Training for Seattle's Luxury Market</h1>
+                    <p>A practical, no-nonsense guide to using artificial intelligence in your real estate business. Designed specifically for experienced agents who want results, not hype.</p>
+                    <button class="btn btn-primary btn-large" onclick="navigateTo('module1')">Begin Training →</button>
+                </div>
+            </div>
+            <div class="container">
+                <div class="section">
+                    <h2>Why This Training Is Different</h2>
+                    <div class="feature-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">👔</div>
+                                <h3>For Experienced Agents</h3>
+                            </div>
+                            <p>No tech jargon. Just practical tools that save you time in Seattle's competitive $2M+ market.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">📊</div>
+                                <h3>Seattle Luxury Focus</h3>
+                            </div>
+                            <p>Every example uses real Seattle neighborhoods, price points, and client profiles you recognize.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">🛡️</div>
+                                <h3>Skepticism-Friendly</h3>
+                            </div>
+                            <p>We address your concerns head-on with real data, not empty promises.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">⏰</div>
+                                <h3>Immediate ROI</h3>
+                            </div>
+                            <p>Learn tools that save you 5-10 hours weekly—starting with your first module.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>What You'll Learn</h2>
+                    <div class="card">
+                        <h3>🔍 Client Research That Stands Out</h3>
+                        <p>Find hidden opportunities and craft personalized pitches faster than competitors.</p>
+                        <div class="local-data">
+                            <h4>Seattle-Specific:</h4>
+                            <p>King/Snohomish County property history, off-market deal patterns, neighborhood-specific trends</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>📝 Listing Descriptions That Sell</h3>
+                        <p>Create professional, high-converting property descriptions in minutes.</p>
+                        <div class="local-data">
+                            <h4>Seattle-Specific:</h4>
+                            <p>Madison Valley vs. Capitol Hill vs. Eastside waterfront, low-maintenance luxury, tech commuter proximity</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>🛡️ Compliance & Risk Management</h3>
+                        <p>Automate checks for Seattle-specific requirements to protect yourself and your clients.</p>
+                        <div class="local-data">
+                            <h4>Seattle-Specific:</h4>
+                            <p>King County flood zones, HOA restrictions, luxury home tax implications</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="testimonial">
+                        <p>"I was skeptical about AI until I saw it find a $3.2M off-market listing in Medina that my team had missed for 6 months. Now it's part of my weekly research routine."</p>
+                        <div class="testimonial-author">— Maria Chen, Windermere Real Estate</div>
+                    </div>
+                    <div class="checkpoint">
+                        <div class="checkpoint-title"><span>✓</span> Welcome Complete</div>
+                        <p>You're ready to begin your AI training. Click "Begin Training" above to start with Module 1: AI Basics.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 1 -->
+        <section id="module1" class="section module-content">
+            <div class="container">
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 25%"></div>
+                </div>
+                <p class="progress-text">Module 1 Progress: 25%</p>
+                <h1>Module 1: Understanding AI—What It Is and Isn't</h1>
+                <p class="section-subtitle">Building a realistic understanding of AI's capabilities and limitations</p>
+                <div class="section">
+                    <h2>🤖 What AI Actually Does (And Doesn't)</h2>
+                    <p>AI is a tool that recognizes patterns in text and generates responses. Think of it as an exceptionally well-read assistant who can help you:</p>
+                    <div class="comparison">
+                        <div class="comparison-header" style="grid-template-columns: 1fr 1fr 1fr;">
+                            <div>AI Can Do</div>
+                            <div>AI Struggles With</div>
+                            <div>AI Should Never Do</div>
+                        </div>
+                        <div class="comparison-row" style="grid-template-columns: 1fr 1fr 1fr;">
+                            <div class="comparison-label">Summarize property histories</div>
+                            <div>Analyze subtle market trends</div>
+                            <div>Replace your judgment</div>
+                        </div>
+                        <div class="comparison-row" style="grid-template-columns: 1fr 1fr 1fr;">
+                            <div class="comparison-label">Draft descriptions</div>
+                            <div>Create perfect templates</div>
+                            <div>Make legal decisions</div>
+                        </div>
+                        <div class="comparison-row" style="grid-template-columns: 1fr 1fr 1fr;">
+                            <div class="comparison-label">Compare comps</div>
+                            <div>Predict exact values</div>
+                            <div>Replace negotiations</div>
+                        </div>
+                    </div>
+                    <div class="tip tip-best">
+                        <div class="tip-header">✓ Best Practice</div>
+                        <p><strong>Position AI as your assistant, not your replacement.</strong> Your clients hire you for your judgment, experience, and relationships. AI helps you deliver that value more efficiently.</p>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>💡 Good/Better/Best: Prompt Quality</h2>
+                    <div class="comparison">
+                        <div class="comparison-header" style="grid-template-columns: 1fr 2fr 1.5fr;">
+                            <div>Level</div>
+                            <div>Example Prompt</div>
+                            <div>Why It Matters</div>
+                        </div>
+                        <div class="comparison-row" style="grid-template-columns: 1fr 2fr 1.5fr;">
+                            <div class="comparison-label">Good</div>
+                            <div>"Tell me about Medina homes"</div>
+                            <div>Gets basic facts only</div>
+                        </div>
+                        <div class="comparison-row" style="grid-template-columns: 1fr 2fr 1.5fr;">
+                            <div class="comparison-label">Better</div>
+                            <div>"What are current waterfront home values in Medina over $2M?"</div>
+                            <div>Includes specific criteria</div>
+                        </div>
+                        <div class="comparison-row" style="grid-template-columns: 1fr 2fr 1.5fr;">
+                            <div class="comparison-label">Best</div>
+                            <div>"Analyze Medina WA waterfront values over $2M. Include price/sqft, days on market trends for 2023-2024, and comparison to Clyde Hill. Format as a report for luxury buyers."</div>
+                            <div>Complete context + format</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>Addressing Common Concerns</h2>
+                    <div class="card">
+                        <h3>"AI will replace real estate agents"</h3>
+                        <p><strong>Reality:</strong> AI cannot replace relationship building, negotiation skills, emotional intelligence, and local market intuition. AI is a tool that makes you more effective, not obsolete.</p>
+                        <div class="local-data">
+                            <h4>Seattle Example:</h4>
+                            <p>AI can't build trust with a high-net-worth client discussing their long-term vision for a waterfront property—but it can help you research their past purchases and prepare personalized recommendations.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>"I'm not tech-savvy enough"</h3>
+                        <p><strong>Reality:</strong> Modern AI tools are user-friendly. You only need to learn how to communicate clearly, not technical operations. If you can send an email, you can use AI.</p>
+                        <div class="tip tip-good">
+                            <div class="tip-header">💡 Tip</div>
+                            <p>Start with simple prompts like "Tell me about properties in Medina, WA" and build from there. Each module will teach you progressively better techniques.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="checkpoint">
+                        <div class="checkpoint-title"><span>✓</span> Module 1 Complete</div>
+                        <p>You now understand what AI can do for your luxury real estate business. Continue to Module 2 to learn about client research.</p>
+                        <button class="btn btn-primary btn-large" onclick="navigateTo('module2'); markComplete('module1');">Continue to Module 2: Client Research →</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 2 -->
+        <section id="module2" class="section module-content">
+            <div class="container">
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 50%"></div>
+                </div>
+                <p class="progress-text">Module 2 Progress: 50%</p>
+                <h1>Module 2: AI for Client Research</h1>
+                <p class="section-subtitle">How to use AI to research clients faster and find hidden opportunities</p>
+                <div class="section">
+                    <h2>🔍 Why Client Research Matters in Seattle</h2>
+                    <div class="feature-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">⏱️</div>
+                                <h3>Save Hours Weekly</h3>
+                            </div>
+                            <p>Research that would take 1-2 hours manually can be done in minutes with AI.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">🎯</div>
+                                <h3>Find Hidden Patterns</h3>
+                            </div>
+                            <p>Identify trends in client behavior that you might miss with traditional research.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">💡</div>
+                                <h3>Personalize Your Approach</h3>
+                            </div>
+                            <p>Tailor your pitch based on a client's property history and preferences.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">🏆</div>
+                                <h3>Stand Out from Competitors</h3>
+                            </div>
+                            <p>Provide insights that other agents might miss, building trust with clients.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>📊 Good/Better/Best Research Prompts</h2>
+                    <div class="prompt-container">
+                        <h3>✅ Good (Basic)</h3>
+                        <p><strong>Prompt:</strong> "Tell me about properties owned by [Client Name] in King County."</p>
+                        <div class="tip tip-good">
+                            <p><strong>Result:</strong> Basic property list without context</p>
+                            <p>⚠️ Misses trends and insights</p>
+                        </div>
+                    </div>
+                    <div class="prompt-container">
+                        <h3>🔥 Better (Optimized)</h3>
+                        <p><strong>Prompt:</strong> "Analyze [Client Name]'s property history in King County. Include sale dates, prices, time held, and any trends (e.g., upsizing/downsizing)."</p>
+                        <div class="tip tip-better">
+                            <p><strong>Result:</strong> Detailed timeline with basic trend analysis</p>
+                            <p class="improvement">✅ Adds context and identifies patterns</p>
+                        </div>
+                    </div>
+                    <div class="prompt-container">
+                        <h3>💎 Best (Advanced)</h3>
+                        <p><strong>Prompt:</strong> "Create a 3-paragraph client profile for [Client Name] based on their King County property history. Include their likely motivations, top 3 neighborhoods they've shown interest in, and 2 personalized home recommendations with comps. Format as a professional report ready for a client meeting."</p>
+                        <div class="tip tip-best">
+                            <p><strong>Result:</strong> Complete client profile with actionable recommendations</p>
+                            <p class="improvement">✅ Ready-to-use for client meetings</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>🏡 Exercise 2.1: Practice Research Prompt</h2>
+                    <div class="exercise">
+                        <div class="exercise-title">Interactive Exercise</div>
+                        <p>Practice creating a research prompt for a Seattle luxury client:</p>
+                        <label>
+                            <strong>Client Type:</strong>
+                            <select id="client-type">
+                                <option value="">Select a client type...</option>
+                                <option value="tech">Tech Executive (Eastside)</option>
+                                <option value="investor">Real Estate Investor</option>
+                                <option value="downsizing">Downsizing Empty Nester</option>
+                                <option value="relocation">Corporate Relocation</option>
+                            </select>
+                        </label>
+                        <label>
+                            <strong>Your Research Prompt:</strong>
+                            <textarea id="research-prompt" class="prompt-input" placeholder="Write your AI prompt here..."></textarea>
+                        </label>
+                        <button class="btn btn-primary" onclick="analyzePrompt()">Analyze My Prompt</button>
+                        <div id="prompt-feedback" class="response-box"></div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>Real Seattle Examples</h2>
+                    <div class="card">
+                        <h3>Example 1: Tech Executive Research</h3>
+                        <p><strong>Scenario:</strong> Client moving from San Francisco, budget $3-4M</p>
+                        <div class="prompt-box">
+                            <strong>Advanced Prompt:</strong>
+                            <p>"Research luxury homes in Medina, Clyde Hill, and Yarrow Point priced $3-4M. Focus on properties with: home offices, lake views, proximity to Microsoft/tech corridors, and modern smart home features. Compare average days on market and price trends for 2023-2024. Format as a neighborhood comparison report."</p>
+                        </div>
+                        <div class="local-data">
+                            <h4>Why This Works:</h4>
+                            <p>• Specific neighborhoods tech executives prefer<br>• Price range clearly stated<br>• Lifestyle features (home office, tech amenities)<br>• Market timing data<br>• Professional format</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Example 2: Investment Property Analysis</h3>
+                        <p><strong>Scenario:</strong> Investor looking for rental properties in Seattle</p>
+                        <div class="prompt-box">
+                            <strong>Advanced Prompt:</strong>
+                            <p>"Analyze rental property investment opportunities in Capitol Hill, Ballard, and Fremont for properties under $1.5M. Include: estimated rental yields, vacancy rates, proximity to Amazon/tech hubs, recent appreciation rates, and tenant demographic trends. Highlight properties with ADU potential or multi-unit zoning."</p>
+                        </div>
+                        <div class="local-data">
+                            <h4>Why This Works:</h4>
+                            <p>• Investment-focused criteria<br>• Multiple neighborhoods for comparison<br>• Rental market data<br>• Future value potential (ADU, zoning)<br>• Tech worker tenant focus</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="checkpoint">
+                        <div class="checkpoint-title"><span>✓</span> Module 2 Complete</div>
+                        <p>You've learned how to use AI for client research. Next, discover how to write compelling listing descriptions.</p>
+                        <button class="btn btn-primary btn-large" onclick="navigateTo('module3'); markComplete('module2');">Continue to Module 3: Listing Descriptions →</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 3 -->
+        <section id="module3" class="section module-content">
+            <div class="container">
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 75%"></div>
+                </div>
+                <p class="progress-text">Module 3 Progress: 75%</p>
+                <h1>Module 3: Writing Listing Descriptions with AI</h1>
+                <p class="section-subtitle">Create professional, compelling property descriptions in minutes</p>
+                <div class="section">
+                    <h2>📝 The Power of Great Descriptions</h2>
+                    <div class="feature-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">📈</div>
+                                <h3>Higher Engagement</h3>
+                            </div>
+                            <p>Well-written listings get 60% more views and inquiries than generic descriptions.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">⏰</div>
+                                <h3>Save Time</h3>
+                            </div>
+                            <p>AI can draft a professional listing in 5 minutes instead of 30-45 minutes.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">🎯</div>
+                                <h3>Target Audiences</h3>
+                            </div>
+                            <p>Customize tone and features for different buyer segments (tech, families, investors).</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">✅</div>
+                                <h3>Consistent Quality</h3>
+                            </div>
+                            <p>Maintain professional standards across all your listings.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>🏠 Good/Better/Best Listing Prompts</h2>
+                    <div class="prompt-container">
+                        <h3>✅ Good (Basic)</h3>
+                        <p><strong>Prompt:</strong> "Write a listing description for a 4-bedroom home in Madison Park."</p>
+                        <div class="tip tip-good">
+                            <p><strong>Result:</strong> Generic description lacking personality and key details</p>
+                            <p>⚠️ Doesn't highlight unique features or target specific buyers</p>
+                        </div>
+                    </div>
+                    <div class="prompt-container">
+                        <h3>🔥 Better (Optimized)</h3>
+                        <p><strong>Prompt:</strong> "Write a 250-word listing for a 4BR/3BA craftsman home in Madison Park, Seattle. Price: $2.8M. Features: lake views, original woodwork, updated kitchen, walking distance to beach. Target audience: families."</p>
+                        <div class="tip tip-better">
+                            <p><strong>Result:</strong> Detailed description with key selling points</p>
+                            <p class="improvement">✅ Includes specifics and target audience</p>
+                        </div>
+                    </div>
+                    <div class="prompt-container">
+                        <h3>💎 Best (Advanced)</h3>
+                        <p><strong>Prompt:</strong> "Create a luxury listing description for a 4BR/3.5BA craftsman in Madison Park, Seattle. Price: $2.8M, 3,200 sqft, built 1925, renovated 2022. Key features: Lake Washington views, original coffered ceilings, chef's kitchen with Thermador appliances, primary suite with spa bath, landscaped garden, 2-car garage, walk to Madison Park beach (5 min). Target: affluent families seeking character + modern amenities. Tone: sophisticated but warm. Include: opening hook, lifestyle benefits, neighborhood highlights, call-to-action. 300 words max."</p>
+                        <div class="tip tip-best">
+                            <p><strong>Result:</strong> Professional, compelling listing ready to publish</p>
+                            <p class="improvement">✅ Complete context, tone, structure, and length specified</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>🎨 Interactive Listing Builder</h2>
+                    <div class="sandbox">
+                        <h3>Build Your Listing Description</h3>
+                        <p>Fill in the details to generate a professional listing prompt:</p>
+                        <label>
+                            <strong>Property Type:</strong>
+                            <select id="property-type">
+                                <option value="single-family">Single Family Home</option>
+                                <option value="condo">Luxury Condo</option>
+                                <option value="townhouse">Townhouse</option>
+                                <option value="waterfront">Waterfront Estate</option>
+                            </select>
+                        </label>
+                        <label>
+                            <strong>Neighborhood:</strong>
+                            <input type="text" id="neighborhood" placeholder="e.g., Queen Anne, Bellevue, Mercer Island">
+                        </label>
+                        <label>
+                            <strong>Price:</strong>
+                            <input type="text" id="price" placeholder="e.g., $2.5M">
+                        </label>
+                        <label>
+                            <strong>Key Features (one per line):</strong>
+                            <textarea id="features" rows="4" placeholder="e.g., Lake views&#10;Chef's kitchen&#10;Home office&#10;Smart home system"></textarea>
+                        </label>
+                        <label>
+                            <strong>Target Buyer:</strong>
+                            <select id="target-buyer">
+                                <option value="family">Families</option>
+                                <option value="tech">Tech Professionals</option>
+                                <option value="downsizing">Downsizing Empty Nesters</option>
+                                <option value="investor">Investors</option>
+                            </select>
+                        </label>
+                        <button class="btn btn-accent" onclick="generateListing()">Generate Listing Prompt</button>
+                        <div id="listing-output" class="sandbox-output" style="display: none;">
+                            <h4>Your Generated Prompt:</h4>
+                            <div id="listing-prompt-text"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>Seattle Neighborhood-Specific Tips</h2>
+                    <div class="card">
+                        <h3>Capitol Hill</h3>
+                        <p><strong>Emphasize:</strong> Walkability, nightlife, cultural scene, proximity to downtown, character homes</p>
+                        <p><strong>Target Buyers:</strong> Young professionals, LGBTQ+ community, creatives</p>
+                    </div>
+                    <div class="card">
+                        <h3>Medina/Clyde Hill</h3>
+                        <p><strong>Emphasize:</strong> Privacy, waterfront access, tech executive proximity, top-rated schools, prestige</p>
+                        <p><strong>Target Buyers:</strong> Tech executives, high-net-worth families, luxury buyers</p>
+                    </div>
+                    <div class="card">
+                        <h3>Ballard</h3>
+                        <p><strong>Emphasize:</strong> Nordic heritage, breweries, waterfront, farmers market, maritime culture</p>
+                        <p><strong>Target Buyers:</strong> Young families, food enthusiasts, outdoor lovers</p>
+                    </div>
+                    <div class="card">
+                        <h3>Queen Anne</h3>
+                        <p><strong>Emphasize:</strong> Space Needle views, historic homes, family-friendly, parks, walkability</p>
+                        <p><strong>Target Buyers:</strong> Families, professionals, urban dwellers seeking character</p>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="checkpoint">
+                        <div class="checkpoint-title"><span>✓</span> Module 3 Complete</div>
+                        <p>You can now create compelling listing descriptions with AI. Next, learn how to use AI for market analysis.</p>
+                        <button class="btn btn-primary btn-large" onclick="navigateTo('module4'); markComplete('module3');">Continue to Module 4: Market Analysis →</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 4 -->
+        <section id="module4" class="section module-content">
+            <div class="container">
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 90%"></div>
+                </div>
+                <p class="progress-text">Module 4 Progress: 90%</p>
+                <h1>Module 4: AI for Market Analysis & Compliance</h1>
+                <p class="section-subtitle">Use AI to analyze trends and ensure regulatory compliance</p>
+                <div class="section">
+                    <h2>📊 Market Analysis Applications</h2>
+                    <div class="feature-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">📈</div>
+                                <h3>Trend Analysis</h3>
+                            </div>
+                            <p>Identify pricing trends, days-on-market patterns, and seasonal fluctuations.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">🏘️</div>
+                                <h3>Neighborhood Comparisons</h3>
+                            </div>
+                            <p>Compare multiple Seattle neighborhoods across various metrics.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">💰</div>
+                                <h3>Investment Analysis</h3>
+                            </div>
+                            <p>Evaluate rental yields, appreciation potential, and ROI projections.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">🔍</div>
+                                <h3>Comp Analysis</h3>
+                            </div>
+                            <p>Generate detailed comparable property reports quickly.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>📋 Compliance & Risk Management</h2>
+                    <div class="card">
+                        <h3>Seattle-Specific Compliance Checks</h3>
+                        <p>Use AI to create checklists and reminders for:</p>
+                        <ul style="margin-left: var(--spacing-lg); margin-top: var(--spacing-sm);">
+                            <li>King County disclosure requirements</li>
+                            <li>Flood zone verification</li>
+                            <li>HOA restriction reviews</li>
+                            <li>Property tax implications</li>
+                            <li>Seattle rental ordinance compliance</li>
+                        </ul>
+                        <div class="prompt-box" style="margin-top: var(--spacing-md);">
+                            <strong>Example Prompt:</strong>
+                            <p>"Create a pre-listing compliance checklist for a luxury waterfront home in King County, WA. Include disclosure requirements, flood zone checks, septic/well considerations, HOA reviews, and any Seattle-specific regulations for properties over $2M."</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Document Review Assistant</h3>
+                        <p>AI can help you review documents faster (always verify with legal counsel):</p>
+                        <div class="prompt-box">
+                            <strong>Example Prompt:</strong>
+                            <p>"Review this HOA CC&R document and highlight: 1) Rental restrictions, 2) Architectural approval requirements, 3) Pet policies, 4) Any clauses that might concern luxury buyers, 5) Special assessments or pending projects. Summarize in bullet points."</p>
+                        </div>
+                        <div class="tip tip-best">
+                            <div class="tip-header">⚠️ Important</div>
+                            <p>AI document review is for preliminary analysis only. Always have legal counsel review critical documents before advising clients.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>🎯 Market Analysis Prompts</h2>
+                    <div class="prompt-container">
+                        <h3>Comparative Market Analysis (CMA)</h3>
+                        <div class="prompt-box">
+                            <strong>Advanced Prompt:</strong>
+                            <p>"Create a comparative market analysis for a 4BR/3BA home in Madison Park, Seattle. Subject property: 3,200 sqft, lake views, recently renovated. Find 5 comparable sales from the past 6 months within 0.5 miles. Include: sale price, price/sqft, days on market, key features. Calculate suggested listing price range and justify your recommendation. Format as a professional CMA report."</p>
+                        </div>
+                    </div>
+                    <div class="prompt-container">
+                        <h3>Investment Property Analysis</h3>
+                        <div class="prompt-box">
+                            <strong>Advanced Prompt:</strong>
+                            <p>"Analyze investment potential for rental properties in Fremont, Seattle. Price range: $800K-$1.2M. Calculate: estimated rental income, vacancy rates, property management costs, projected ROI, appreciation trends (5-year), and tenant demographics. Compare to Capitol Hill and Ballard. Recommend top investment strategy."</p>
+                        </div>
+                    </div>
+                    <div class="prompt-container">
+                        <h3>Neighborhood Trend Report</h3>
+                        <div class="prompt-box">
+                            <strong>Advanced Prompt:</strong>
+                            <p>"Create a 2024 market trend report for luxury homes ($2M+) in Bellevue, WA. Include: median price changes (year-over-year), days on market trends, inventory levels, buyer demographics, new development impact, tech industry influence, and 2025 projections. Format for client presentation."</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>🛡️ Risk Assessment Example</h2>
+                    <div class="exercise">
+                        <div class="exercise-title">Interactive Risk Assessment</div>
+                        <p>Use AI to identify potential risks in property transactions:</p>
+                        <div class="prompt-box">
+                            <strong>Sample Scenario:</strong>
+                            <p>Client wants to buy a $3.5M waterfront home on Mercer Island with a private dock.</p>
+                            <strong>AI Prompt:</strong>
+                            <p>"Identify potential risks and due diligence items for purchasing a waterfront property on Mercer Island, WA with a private dock. Include: environmental regulations, shoreline permits, dock maintenance, water rights, King County requirements, insurance considerations, and resale implications. Organize by priority level."</p>
+                        </div>
+                        <div class="local-data">
+                            <h4>AI Output Might Include:</h4>
+                            <p><strong>High Priority:</strong><br>• Verify shoreline permits and compliance<br>• Check dock condition and maintenance history<br>• Review water quality reports</p>
+                            <p><strong>Medium Priority:</strong><br>• Assess flood zone status<br>• Review waterfront insurance requirements<br>• Check HOA restrictions on dock modifications</p>
+                            <p><strong>Low Priority but Important:</strong><br>• Understand maintenance costs<br>• Review environmental protection requirements<br>• Consider future regulatory changes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="checkpoint">
+                        <div class="checkpoint-title"><span>✓</span> Module 4 Complete</div>
+                        <p>You've learned how to use AI for market analysis and compliance. Move to the final module to master advanced techniques.</p>
+                        <button class="btn btn-primary btn-large" onclick="navigateTo('module5'); markComplete('module4');">Continue to Module 5: Advanced Strategies →</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 5 -->
+        <section id="module5" class="section module-content">
+            <div class="container">
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 100%"></div>
+                </div>
+                <p class="progress-text">Module 5 Progress: 100%</p>
+                <h1>Module 5: Advanced AI Strategies & Best Practices</h1>
+                <p class="section-subtitle">Master advanced techniques and develop your AI workflow</p>
+                <div class="section">
+                    <h2>🚀 Advanced Prompt Engineering</h2>
+                    <div class="card">
+                        <h3>The RACE Framework</h3>
+                        <p>Create better prompts using this proven structure:</p>
+                        <ul style="margin-left: var(--spacing-lg); margin-top: var(--spacing-sm);">
+                            <li><strong>R</strong>ole: Define who the AI should act as</li>
+                            <li><strong>A</strong>ction: Specify what you want done</li>
+                            <li><strong>C</strong>ontext: Provide relevant details</li>
+                            <li><strong>E</strong>xpectation: Define format and tone</li>
+                        </ul>
+                        <div class="prompt-box" style="margin-top: var(--spacing-md);">
+                            <strong>RACE Example:</strong>
+                            <p><strong>Role:</strong> "Act as a luxury real estate marketing specialist familiar with Seattle's market."</p>
+                            <p><strong>Action:</strong> "Write an email to a potential buyer."</p>
+                            <p><strong>Context:</strong> "The buyer is a tech executive relocating from San Francisco, interested in Medina waterfront properties $4-6M with modern smart home features."</p>
+                            <p><strong>Expectation:</strong> "Professional but warm tone, 200 words, include 2 property recommendations and a meeting request."</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>🔄 Building Your AI Workflow</h2>
+                    <div class="feature-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">📅</div>
+                                <h3>Morning Routine (15 min)</h3>
+                            </div>
+                            <p>• Review overnight market changes<br>• Generate daily neighborhood reports<br>• Draft follow-up emails to clients</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">🏠</div>
+                                <h3>New Listing Workflow</h3>
+                            </div>
+                            <p>• Generate listing description<br>• Create social media posts<br>• Draft email announcement<br>• Prepare CMA report</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">👥</div>
+                                <h3>Client Meeting Prep</h3>
+                            </div>
+                            <p>• Research client background<br>• Analyze property history<br>• Generate personalized recommendations<br>• Create presentation materials</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">📊</div>
+                                <h3>Weekly Analysis</h3>
+                            </div>
+                            <p>• Neighborhood trend reports<br>• Competitive analysis<br>• Investment opportunity alerts<br>• Market summary for clients</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>💡 Pro Tips from Seattle Agents</h2>
+                    <div class="testimonial">
+                        <p>"I use AI to draft 80% of my content, then add my personal touch and local expertise. This workflow saves me 8-10 hours weekly while maintaining my authentic voice."</p>
+                        <div class="testimonial-author">— James Rodriguez, Compass Real Estate</div>
+                    </div>
+                    <div class="testimonial">
+                        <p>"AI helped me identify an emerging trend in Eastside condos that led to three quick sales. I now run weekly trend analyses that would have been impossible before."</p>
+                        <div class="testimonial-author">— Sarah Kim, Realogics Sotheby's</div>
+                    </div>
+                    <div class="testimonial">
+                        <p>"The compliance checklists AI generates have caught issues that could have caused problems. It's like having a detail-oriented assistant reviewing everything."</p>
+                        <div class="testimonial-author">— Michael Chen, Windermere</div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>⚠️ Common Mistakes to Avoid</h2>
+                    <div class="card">
+                        <h3>❌ Don't: Copy AI Output Directly</h3>
+                        <p><strong>Why:</strong> AI can make factual errors and lacks your personal expertise.</p>
+                        <p><strong>Do Instead:</strong> Review, fact-check, and personalize all AI-generated content before using it.</p>
+                    </div>
+                    <div class="card">
+                        <h3>❌ Don't: Use AI for Legal Advice</h3>
+                        <p><strong>Why:</strong> AI is not a licensed attorney and can miss critical legal nuances.</p>
+                        <p><strong>Do Instead:</strong> Use AI for preliminary research, then consult legal professionals for official guidance.</p>
+                    </div>
+                    <div class="card">
+                        <h3>❌ Don't: Share Confidential Client Information</h3>
+                        <p><strong>Why:</strong> Privacy violations can damage relationships and violate regulations.</p>
+                        <p><strong>Do Instead:</strong> Use generic examples or anonymized data when using AI tools.</p>
+                    </div>
+                    <div class="card">
+                        <h3>❌ Don't: Rely on AI for Pricing Decisions</h3>
+                        <p><strong>Why:</strong> AI lacks access to real-time MLS data and market intuition.</p>
+                        <p><strong>Do Instead:</strong> Use AI to organize comp data, but apply your professional judgment for final pricing.</p>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>🎓 Your 30-Day AI Implementation Plan</h2>
+                    <div class="card">
+                        <h3>Week 1: Foundation</h3>
+                        <p>• Choose an AI tool (ChatGPT, Claude, etc.)<br>• Practice basic prompts with Module 1 & 2 techniques<br>• Generate 3 client research reports<br>• Write 2 listing descriptions</p>
+                    </div>
+                    <div class="card">
+                        <h3>Week 2: Expansion</h3>
+                        <p>• Create your first CMA with AI assistance<br>• Generate neighborhood analysis reports<br>• Draft 5 client emails<br>• Develop your personal prompt templates</p>
+                    </div>
+                    <div class="card">
+                        <h3>Week 3: Integration</h3>
+                        <p>• Build AI into your morning routine<br>• Use AI for all new listings<br>• Create compliance checklists<br>• Track time saved vs. manual methods</p>
+                    </div>
+                    <div class="card">
+                        <h3>Week 4: Optimization</h3>
+                        <p>• Refine your workflows based on results<br>• Create a library of your best prompts<br>• Teach team members your techniques<br>• Measure ROI (time saved, deals closed)</p>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>📚 Recommended Resources</h2>
+                    <div class="card">
+                        <h3>AI Tools for Real Estate</h3>
+                        <p><strong>ChatGPT (OpenAI):</strong> General-purpose, great for writing and research<br>
+                        <strong>Claude (Anthropic):</strong> Excellent for longer documents and analysis<br>
+                        <strong>Perplexity AI:</strong> Best for real-time research with citations</p>
+                    </div>
+                    <div class="card">
+                        <h3>Seattle Market Resources</h3>
+                        <p><strong>NWMLS:</strong> Official MLS data for King/Snohomish counties<br>
+                        <strong>King County Assessor:</strong> Property records and tax information<br>
+                        <strong>Seattle Times Real Estate:</strong> Local market news and trends</p>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="checkpoint">
+                        <div class="checkpoint-title"><span>🎉</span> Training Complete!</div>
+                        <p>Congratulations! You've completed the AI Training for Seattle Luxury Real Estate. You now have the skills to:</p>
+                        <ul style="margin-left: var(--spacing-lg); margin-top: var(--spacing-sm); margin-bottom: var(--spacing-md);">
+                            <li>Conduct client research 10x faster</li>
+                            <li>Write compelling listing descriptions in minutes</li>
+                            <li>Generate market analyses and compliance checklists</li>
+                            <li>Build efficient AI-powered workflows</li>
+                        </ul>
+                        <p><strong>Next Steps:</strong></p>
+                        <p>1. Implement your 30-day plan starting today<br>
+                        2. Track your time savings and results<br>
+                        3. Share your success with colleagues<br>
+                        4. Continue refining your AI skills</p>
+                        <button class="btn btn-accent btn-large" onclick="navigateTo('welcome'); markComplete('module5');">Return to Welcome</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <p>&copy; 2024 AI Training for Seattle Luxury Real Estate. All rights reserved.</p>
+            <p>Designed for experienced real estate professionals in the Seattle market.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Navigation system
+        function navigateTo(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.module-content');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Show target section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+                
+                // Update navigation buttons
+                const navButtons = document.querySelectorAll('.nav-btn');
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                
+                const activeBtn = document.querySelector(`[data-section="${sectionId}"]`);
+                if (activeBtn) {
+                    activeBtn.classList.add('active');
+                }
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Mark module as completed
+        function markComplete(moduleId) {
+            const btn = document.querySelector(`[data-section="${moduleId}"]`);
+            if (btn && !btn.classList.contains('completed')) {
+                btn.classList.add('completed');
+                
+                // Save to localStorage
+                const completed = JSON.parse(localStorage.getItem('completedModules') || '[]');
+                if (!completed.includes(moduleId)) {
+                    completed.push(moduleId);
+                    localStorage.setItem('completedModules', JSON.stringify(completed));
+                }
+            }
+        }
+
+        // Load completed modules from localStorage
+        function loadProgress() {
+            const completed = JSON.parse(localStorage.getItem('completedModules') || '[]');
+            completed.forEach(moduleId => {
+                const btn = document.querySelector(`[data-section="${moduleId}"]`);
+                if (btn) {
+                    btn.classList.add('completed');
+                }
+            });
+        }
+
+        // Analyze prompt quality (Module 2)
+        function analyzePrompt() {
+            const clientType = document.getElementById('client-type').value;
+            const prompt = document.getElementById('research-prompt').value;
+            const feedback = document.getElementById('prompt-feedback');
+            
+            if (!clientType) {
+                feedback.innerHTML = '<p style="color: var(--color-error);">Please select a client type first.</p>';
+                feedback.classList.add('visible');
+                return;
+            }
+            
+            if (!prompt.trim()) {
+                feedback.innerHTML = '<p style="color: var(--color-error);">Please write a prompt to analyze.</p>';
+                feedback.classList.add('visible');
+                return;
+            }
+            
+            // Simple analysis based on prompt characteristics
+            let score = 0;
+            let suggestions = [];
+            
+            // Check for specificity
+            if (prompt.length > 100) score++;
+            else suggestions.push('Add more specific details (neighborhood, price range, features)');
+            
+            // Check for format/structure mention
+            if (prompt.toLowerCase().includes('format') || prompt.toLowerCase().includes('report')) score++;
+            else suggestions.push('Specify the output format (e.g., "Format as a report")');
+            
+            // Check for context
+            if (prompt.toLowerCase().includes('seattle') || prompt.toLowerCase().includes('king county')) score++;
+            else suggestions.push('Include Seattle-specific location details');
+            
+            // Check for target audience
+            if (prompt.toLowerCase().includes('client') || prompt.toLowerCase().includes('buyer')) score++;
+            else suggestions.push('Mention the target client type or use case');
+            
+            let level = score <= 1 ? 'Good' : score <= 2 ? 'Better' : 'Best';
+            let color = score <= 1 ? 'var(--color-warning)' : score <= 2 ? 'var(--color-primary-light)' : 'var(--color-accent)';
+            
+            let html = `<h4 style="color: ${color};">Prompt Quality: ${level} (${score}/4)</h4>`;
+            
+            if (suggestions.length > 0) {
+                html += '<p><strong>Suggestions for improvement:</strong></p><ul style="margin-left: var(--spacing-lg);">';
+                suggestions.forEach(s => html += `<li>${s}</li>`);
+                html += '</ul>';
+            } else {
+                html += '<p style="color: var(--color-accent);"><strong>Excellent prompt! This should generate useful results.</strong></p>';
+            }
+            
+            feedback.innerHTML = html;
+            feedback.classList.add('visible');
+        }
+
+        // Generate listing description prompt (Module 3)
+        function generateListing() {
+            const propertyType = document.getElementById('property-type').value;
+            const neighborhood = document.getElementById('neighborhood').value;
+            const price = document.getElementById('price').value;
+            const features = document.getElementById('features').value;
+            const targetBuyer = document.getElementById('target-buyer').value;
+            
+            if (!neighborhood || !price) {
+                alert('Please fill in at least the neighborhood and price.');
+                return;
+            }
+            
+            const buyerMap = {
+                'family': 'families seeking a blend of comfort and convenience',
+                'tech': 'tech professionals who value modern amenities and smart home features',
+                'downsizing': 'empty nesters looking for low-maintenance luxury',
+                'investor': 'investors seeking strong rental income and appreciation potential'
+            };
+            
+            const prompt = `Create a luxury listing description for a ${propertyType} in ${neighborhood}, Seattle. Price: ${price}. Key features: ${features.split('\n').join(', ')}. Target audience: ${buyerMap[targetBuyer]}. Tone: sophisticated but warm. Include: opening hook, lifestyle benefits, neighborhood highlights, call-to-action. 300 words max.`;
+            
+            document.getElementById('listing-prompt-text').innerHTML = `<div class="prompt-box">${prompt}</div>
+                <p style="margin-top: var(--spacing-md);"><strong>Next step:</strong> Copy this prompt and use it with ChatGPT, Claude, or your preferred AI tool to generate your listing description.</p>`;
+            document.getElementById('listing-output').style.display = 'block';
+        }
+
+        // Set up navigation event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const section = this.getAttribute('data-section');
+                    navigateTo(section);
+                });
+            });
+            
+            // Load saved progress
+            loadProgress();
+        });
+    </script>
+</body>
+</html>
